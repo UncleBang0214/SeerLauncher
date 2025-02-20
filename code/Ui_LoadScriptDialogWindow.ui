@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>LoadScriptDialogWindow</class>
+    <widget class="QDialog" name="LoadScriptDialogWindow">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>400</width>
+                <height>150</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>加载自定义脚本</string>
+        </property>
+        <widget class="QLabel" name="filePathLabel">
+            <property name="geometry">
+                <rect>
+                    <x>20</x>
+                    <y>9</y>
+                    <width>361</width>
+                    <height>41</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>未选择文件</string>
+            </property>
+            <property name="alignment">
+                <set>Qt::AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="QPushButton" name="selectFileButton">
+            <property name="geometry">
+                <rect>
+                    <x>150</x>
+                    <y>60</y>
+                    <width>91</width>
+                    <height>31</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>选择脚本文件</string>
+            </property>
+        </widget>
+        <widget class="QDialogButtonBox" name="buttonBox">
+            <property name="geometry">
+                <rect>
+                    <x>110</x>
+                    <y>100</y>
+                    <width>161</width>
+                    <height>41</height>
+                </rect>
+            </property>
+            <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="standardButtons">
+                <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+            </property>
+        </widget>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

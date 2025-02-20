@@ -1,0 +1,21 @@
+{
+    "tasks": [
+        {
+            "name": "task_1",
+            "image": "尼尔.bmp",
+            "coords": [[870, 520], [400, 370]],
+            "next_task": "task_2",
+            "interval": 0.2,
+			"use_image_recognition": true
+        },
+		{
+            "name": "task_2",
+            "image": "道具入包.bmp",
+            "coords": [480, 370],
+            "next_task": "task_1",
+            "interval": 0.2,
+			"use_image_recognition": true
+        }
+    ],
+    "start_task": "task_1"
+}
