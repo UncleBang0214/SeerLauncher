@@ -1,0 +1,98 @@
+{
+    "tasks": [
+        {
+            "name": "task_1",
+            "image": "勇者之塔战斗失败.bmp",
+            "coords": [[835, 550], [440, 430], [480, 360], [450, 170], [480, 360]],
+            "next_task": "task_2",
+            "interval": 1,
+			"use_image_recognition": true
+        },
+        {
+            "name": "task_2",
+            "image": "勇者之塔1.bmp",
+            "coords": [445, 95],
+            "next_task": "task_3",
+            "interval": 1,
+			"use_image_recognition": true
+        },
+        {
+            "name": "task_3",
+            "image": "勇者之塔2.bmp",
+            "coords": [[610, 320], [795, 320]],
+            "next_task": "task_4",
+            "interval": 1,
+			"use_image_recognition": true
+        },
+        {
+            "name": "task_4",
+            "image": "勇者之塔3.bmp",
+            "coords": [490, 290],
+            "next_task": "task_5",
+            "interval": 1,
+			"use_image_recognition": true
+        },
+        {
+            "name": "task_5",
+            "image": "战斗胜利.bmp",
+            "coords": [[480, 370], [480, 370], [480, 370], [480, 370]],
+            "next_task": "task_6",
+            "interval": 1,
+			"use_image_recognition": true,
+            "extra_action": {
+                "trigger_interval": 2,
+                "actions": [
+					{
+						"image": "",
+						"coords": [180, 440],
+						"delay": 0.3,
+						"use_image_recognition": false
+					},
+					{
+						"image": "治疗按钮.png",
+						"coords": [420, 430],
+						"delay": 0.3,
+						"use_image_recognition": true
+					},
+					{
+						"image": "确认1.png",
+						"coords": [480, 360],
+						"delay": 0.3,
+						"use_image_recognition": true
+					},
+					{
+						"image": "关闭背包.png",
+						"coords": [450, 170],
+						"delay": 0.3,
+						"use_image_recognition": true
+					}
+                ]
+            }
+        },
+        {
+            "name": "task_6",
+            "image": "精灵升级.bmp",
+            "coords": [[480, 420], [480, 370], [480, 370]],
+            "next_task": "task_7",
+            "interval": 1,
+			"use_image_recognition": true
+        },
+        {
+            "name": "task_7",
+            "image": "战斗失败.bmp",
+            "coords": [480, 370],
+            "next_task": "task_8",
+            "interval": 1,
+			"use_image_recognition": true
+        },
+        {
+            "name": "task_8",
+            "image": "误触赛尔个人信息.bmp",
+            "coords": [400, 140],
+            "next_task": "task_1",
+            "interval": 1,
+			"use_image_recognition": true
+        }
+    ],
+    "start_task": "task_1"
+}

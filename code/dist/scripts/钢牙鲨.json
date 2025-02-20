@@ -1,0 +1,33 @@
+{
+    "tasks": [
+        {
+            "name": "task_1",
+            "image": "海洋星三图海草.bmp",
+            "coords": [870, 100],
+            "next_task": "task_2",
+            "interval": 1
+        },
+        {
+            "name": "task_2",
+            "image": "钢牙鲨挑战框.bmp",
+            "coords": [400, 370],
+            "next_task": "task_3",
+            "interval": 1
+        },
+        {
+            "name": "task_3",
+            "image": "战斗胜利.bmp",
+            "coords": [[480, 370], [480, 370], [480, 370]],
+            "next_task": "task_4",
+            "interval": 0.5
+        },
+        {
+            "name": "task_4",
+            "image": "精灵升级.bmp",
+            "coords": [[480, 420], [480, 370], [480, 370]],
+            "next_task": "task_1",
+            "interval": 1
+        }
+    ],
+    "start_task": "task_1"
+}
