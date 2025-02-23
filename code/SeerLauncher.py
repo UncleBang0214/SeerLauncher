@@ -446,6 +446,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         listener = Listener(on_press=self.on_press)
         listener.start()
 
+    # 主任务执行逻辑
     def run_script(self):
         global global_is_scripts_enabled, dm
         try:
@@ -454,34 +455,45 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                 QMessageBox.warning(self, "提示", "该功能需要以管理员权限运行")
                 global_is_scripts_enabled = False
                 return
+
             hwnd = int(self.winId())
             bind_result = dm.BindWindow(hwnd, "normal", "normal", "normal", 0)
             if not bind_result:
                 print("窗口绑定失败")
                 global_is_scripts_enabled = False
                 return
+
+            # 加载脚本配置
             config = self.load_script_config(global_script_path)
             if not config:
                 print("无法加载脚本配置文件，脚本终止")
                 global_is_scripts_enabled = False
                 return
-            print("\n=====================脚本开始运行=====================\n")
+
+            print("=====================脚本开始运行=====================")
+
             tasks = config.get("tasks", [])
             start_task_name = config.get("start_task", "")
             task_map = {task.get("name", f"task_{i + 1}"): task for i, task in enumerate(tasks)}
             current_task_name = start_task_name
             task_loop_counts = {}
+
             while global_is_scripts_enabled:
                 if not current_task_name or current_task_name not in task_map:
                     print("当前任务无效，返回起始任务")
                     current_task_name = start_task_name
                     continue
+
                 current_task = task_map.get(current_task_name, {})
                 target_image = current_task.get("image", "")
                 click_coords = current_task.get("coords", [])
                 next_task_name = current_task.get("next_task", start_task_name)
                 task_interval = current_task.get("interval", 1)
                 use_image_recognition = current_task.get("use_image_recognition", True)
+
+                print(f"\n=====================任务 [{current_task_name}] 开始执行=====================")
+
+                # 图像识别逻辑
                 if use_image_recognition and target_image:
                     found = dm.FindPic(0, 0, 4000, 4000, resource_path(f"img/{target_image}"), "000000", 0.9, 0)
                     if found[1] == -1 and found[2] == -1:
@@ -490,30 +502,48 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                         continue
                     else:
                         print(f"任务 [{current_task_name}] 识别到 {target_image}")
-                        click_x, click_y = found[1], found[2]
-                else:
-                    if isinstance(click_coords[0], int):
-                        click_x, click_y = click_coords
-                    elif isinstance(click_coords[0], list):
-                        click_x, click_y = click_coords[0]
-                dm.MoveTo(click_x, click_y)
-                dm.LeftClick()
-                print(f"任务 [{current_task_name}] 点击坐标: ({click_x}, {click_y})")
+
+                # 点击坐标逻辑
+                if isinstance(click_coords[0], int):  # 单个坐标
+                    click_x, click_y = click_coords
+                    dm.MoveTo(click_x, click_y)
+                    dm.LeftClick()
+                    print(f"任务 [{current_task_name}] 点击坐标: ({click_x}, {click_y})")
+                elif isinstance(click_coords[0], list):  # 多个坐标
+                    for i, coord in enumerate(click_coords):
+                        click_x, click_y = coord
+                        dm.MoveTo(click_x, click_y)
+                        dm.LeftClick()
+                        print(f"任务 [{current_task_name}] 第 {i + 1} 次点击坐标: ({click_x}, {click_y})")
+                        time.sleep(0.2)  # 添加短暂停顿以避免过于频繁的操作
+
+                # 更新循环计数
                 task_loop_counts[current_task_name] = task_loop_counts.get(current_task_name, 0) + 1
                 loop_count = task_loop_counts[current_task_name]
                 print(
                     f"\n=====================任务 [{current_task_name}] 当前循环计数: {loop_count} =====================\n")
+
+                # 执行额外操作
                 extra_action_config = current_task.get("extra_action", {})
                 if extra_action_config:
                     trigger_interval = extra_action_config.get("trigger_interval", 7)
                     if loop_count % trigger_interval == 0:
-                        print("[额外操作] 条件满足，准备执行额外操作")
+                        print(
+                            f"[额外操作] 条件满足 (循环计数 {loop_count} % 触发间隔 {trigger_interval} == 0)，准备执行额外操作")
                         self.perform_extra_action(extra_action_config)
                         print("[额外操作] 额外操作完成，继续循环")
+                    else:
+                        print(
+                            f"[额外操作] 当前循环计数 {loop_count} 不满足触发条件 (触发间隔 {trigger_interval})，跳过额外操作")
+                else:
+                    print(f"[额外操作] 当前任务 [{current_task_name}] 未配置额外操作，跳过")
+
+                # 跳转到下一个任务
                 current_task_name = next_task_name
                 if global_is_scripts_enabled:
                     print(f"任务 [{current_task_name}] 等待 {task_interval} 秒以确保下一步目标出现")
                     time.sleep(task_interval)
+
         except Exception as e:
             import traceback
             print(f"运行脚本时发生错误: {e}")
@@ -524,39 +554,49 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             print("\n=====================脚本线程已终止=====================\n")
             global_is_scripts_enabled = False
 
+    # 执行额外操作逻辑
+    # 执行额外操作逻辑
     def perform_extra_action(self, extra_action_config):
-        actions = extra_action_config.get("actions", [])
-        if not actions:
-            print("[额外操作] 未定义任何动作")
+        steps = extra_action_config.get("actions", [])  # 使用 "actions" 字段
+        if not steps:
+            print("[额外操作] 未配置任何操作步骤，跳过额外操作")
             return
-        for i, action in enumerate(actions):
-            target_image = action.get("image", "")
-            coords = action.get("coords", [])
-            delay = action.get("delay", 0.2)
-            use_image_recognition = action.get("use_image_recognition", False)
+
+        for step_index, step in enumerate(steps):
+            target_image = step.get("image", "")
+            click_coords = step.get("coords", [])
+            use_image_recognition = step.get("use_image_recognition", "True") == "True"
+            delay = step.get("delay", 0.3)
+
+            print(f"[额外操作 第{step_index + 1}步] 开始执行")
+
+            # 图像识别逻辑
             if use_image_recognition and target_image:
-                if not target_image.strip():
-                    print(f"[额外操作 第{i + 1}步] 图片路径为空，跳过图像识别")
-                    continue
                 found = dm.FindPic(0, 0, 4000, 4000, resource_path(f"img/{target_image}"), "000000", 0.9, 0)
                 if found[1] == -1 and found[2] == -1:
-                    print(f"[额外操作 第{i + 1}步] 未找到图片 {target_image}，跳过此动作")
-                    continue
+                    print(f"[额外操作 第{step_index + 1}步] 未找到图片 {target_image}，跳过点击")
                 else:
-                    print(f"[额外操作 第{i + 1}步] 识别到 {target_image}")
-                    click_x, click_y = found[1], found[2]
-            else:
-                if isinstance(coords[0], int):
-                    click_x, click_y = coords
-                elif isinstance(coords[0], list):
-                    click_x, click_y = coords[0]
-            try:
-                print(f"[额外操作 第{i + 1}步] 点击坐标: ({click_x}, {click_y}), 延迟: {delay} 秒")
+                    print(f"[额外操作 第{step_index + 1}步] 识别到 {target_image}")
+
+            # 点击坐标逻辑
+            if isinstance(click_coords[0], int):  # 单个坐标
+                click_x, click_y = click_coords
                 dm.MoveTo(click_x, click_y)
                 dm.LeftClick()
-                time.sleep(delay)
-            except Exception as e:
-                print(f"[额外操作 第{i + 1}步] 执行失败: {e}")
+                print(f"[额外操作 第{step_index + 1}步] 点击坐标: ({click_x}, {click_y}), 延迟: {delay} 秒")
+            elif isinstance(click_coords[0], list):  # 多个坐标
+                for i, coord in enumerate(click_coords):
+                    click_x, click_y = coord
+                    dm.MoveTo(click_x, click_y)
+                    dm.LeftClick()
+                    print(
+                        f"[额外操作 第{step_index + 1}步] 第 {i + 1} 次点击坐标: ({click_x}, {click_y}), 延迟: {delay} 秒")
+                    time.sleep(delay)
+
+            # 等待延迟
+            time.sleep(delay)
+
+        print("[额外操作] 额外操作完成，继续循环")
 
     def closeEvent(self, event):
         global global_is_scripts_enabled, script_thread
