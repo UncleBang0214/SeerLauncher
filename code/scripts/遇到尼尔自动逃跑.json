@@ -6,7 +6,7 @@
             "coords": [[870, 520], [400, 370]],
             "next_task": "task_2",
             "interval": 0.2,
-			"use_image_recognition": true
+			"use_image_recognition": "True"
         },
 		{
             "name": "task_2",
@@ -14,7 +14,7 @@
             "coords": [480, 370],
             "next_task": "task_1",
             "interval": 0.2,
-			"use_image_recognition": true
+			"use_image_recognition": "True"
         }
     ],
     "start_task": "task_1"

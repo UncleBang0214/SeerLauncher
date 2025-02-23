@@ -6,7 +6,7 @@
             "coords": [870, 100],
             "next_task": "task_2",
             "interval": 1,
-			"use_image_recognition": true
+			"use_image_recognition": "True"
         },
         {
             "name": "task_2",
@@ -14,7 +14,7 @@
             "coords": [400, 370],
             "next_task": "task_3",
             "interval": 1,
-			"use_image_recognition": true
+			"use_image_recognition": "True"
         },
         {
             "name": "task_3",
@@ -22,7 +22,7 @@
             "coords": [[480, 370], [480, 370], [480, 370]],
             "next_task": "task_4",
             "interval": 0.5,
-			"use_image_recognition": true
+			"use_image_recognition": "True"
         },
         {
             "name": "task_4",
@@ -30,7 +30,7 @@
             "coords": [[480, 420], [480, 370], [480, 370]],
             "next_task": "task_1",
             "interval": 1,
-			"use_image_recognition": true
+			"use_image_recognition": "True"
         }
     ],
     "start_task": "task_1"
