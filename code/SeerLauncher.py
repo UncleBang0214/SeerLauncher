@@ -29,8 +29,8 @@ script_thread = None  # 脚本线程
 is_running = False  # 快捷键启停标志
 
 
-##################### 获取资源路径 #####################
 def resource_path(relative_path):
+    """获取资源路径"""
     if getattr(sys, 'frozen', False):  # 判断是否为打包后的exe文件
         base_path = os.path.dirname(sys.executable)  # exe文件所在目录
     else:
@@ -39,8 +39,8 @@ def resource_path(relative_path):
     return resource_path
 
 
-##################### 初始化大漠插件并注册为全局变量 #####################
 def initialize_dm():
+    """初始化大漠插件并注册为全局变量"""
     global dm
     try:
         dll_path = resource_path('dm.dll')
@@ -61,8 +61,8 @@ def initialize_dm():
         return False
 
 
-##################### 注销大漠插件 #####################
 def unregister_dm():
+    """注销大漠插件"""
     global dm
     if dm is not None:
         print("正在注销大漠插件")
@@ -82,8 +82,8 @@ def unregister_dm():
         print("大漠插件未初始化，无需注销！")
 
 
-##################### 根据账号密码生成oldSession #####################
 def string_to_hex(s):
+    """处理账号密码字符串"""
     hex_string = ''.join([format(ord(c), '02x') for c in s])
     while len(hex_string) < 24:
         hex_string = '0' + hex_string
@@ -91,6 +91,7 @@ def string_to_hex(s):
 
 
 def generate_old_session(account, password):
+    """根据账号密码生成oldSession"""
     account_bytes = string_to_hex(password)
     num = int(account)
     hex_string = format(num, '08x')
@@ -98,8 +99,9 @@ def generate_old_session(account, password):
     return old_session
 
 
-##################### 确认退出对话框定义 #####################
 class ConfirmExitDialog(QDialog):
+    """确认退出对话框定义"""
+
     def __init__(self, parent=None):
         super(ConfirmExitDialog, self).__init__(parent)
         self.ui = Ui_ConfirmExitDialogWindow()
@@ -108,8 +110,9 @@ class ConfirmExitDialog(QDialog):
         self.ui.buttonBox.rejected.connect(self.reject)
 
 
-##################### 登录窗口定义及初始化 #####################
 class LoginDialog(QDialog, Ui_LoginWindow):
+    """登录窗口定义及初始化"""
+
     def __init__(self, parent=None):
         super(LoginDialog, self).__init__(parent)
         self.setupUi(self)
@@ -133,8 +136,9 @@ class LoginDialog(QDialog, Ui_LoginWindow):
         self.accept()
 
 
-##################### 变速窗口定义及初始化 #####################
 class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
+    """变速窗口定义及初始化"""
+
     def __init__(self, parent=None):
         super(SpeedControlDialog, self).__init__(parent)
         self.setupUi(self)
@@ -162,8 +166,9 @@ class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
             print(f"变速时发生错误: {e}")
 
 
-##################### 计算器窗口定义及初始化 #####################
 class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
+    """计算器窗口定义及初始化"""
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -270,8 +275,9 @@ class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
             print(f"Error: {e}")
 
 
-##################### 加载自定义脚本窗口定义及初始化 #####################
 class LoadScriptDialog(QDialog):
+    """加载自定义脚本窗口定义及初始化"""
+
     def __init__(self, parent=None):
         super(LoadScriptDialog, self).__init__(parent)
         self.ui = Ui_LoadScriptDialogWindow()
@@ -298,23 +304,28 @@ class LoadScriptDialog(QDialog):
         return self.selected_script_path
 
 
-##################### 主窗口定义及初始化 #####################
 class MyMainWindow(QMainWindow, Ui_MainWindow):
+    """主窗口定义及初始化"""
+
     def __init__(self, old_session):
         super(MyMainWindow, self).__init__()
         self.setupUi(self)
+        # activeX控件
         self.axWidget = QAxContainer.QAxWidget(self.centralwidget)
         self.axWidget.setGeometry(QRect(-25, -20, 1024, 700))
         self.axWidget.setControl("{8856F961-340A-11D0-A96B-00C04FD705A2}")
         self.axWidget.setProperty("DisplayAlerts", False)
         self.axWidget.setProperty("DisplayScrollBars", False)
+        # 登录和刷新
         self.old_session = old_session
         self.navigate_to_target()
         self.ReFresh.triggered.connect(self.refresh_page)
+        # 菜单
         self.SpeedChange.triggered.connect(self.open_speed_dialog)
         self.SoundOff.triggered.connect(self.set_sound_off)
         self.StayTop.triggered.connect(self.stay_on_top)
         self.Calculator.triggered.connect(self.open_calculator)
+        # 脚本
         self.EnableScripts.triggered.connect(self.enable_script)
         self.LoadCustomScript.triggered.connect(self.open_load_script_dialog)
         self.confirmExitDialog = ConfirmExitDialog()
@@ -323,26 +334,29 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             self.LoadCustomScript.setEnabled(False)
             QMessageBox.warning(self, "提示", "脚本功能需要以管理员权限运行")
             print("大漠插件未加载，禁用脚本功能按钮")
-
-        # 启动键盘监听器
+        # 键盘监听器
         self.start_keyboard_listener()
 
+    # 登录
     def navigate_to_target(self):
         # url = f'https://fanyi.youdao.com/#/TextTranslate'
         url = f'http://b2.sjcmc.cn:16484/?sid={self.old_session}'
         print(f"生成URL: {url}")
         self.axWidget.dynamicCall("Navigate(const QString&)", url)
 
+    # 刷新
     def refresh_page(self):
         url = f'http://b2.sjcmc.cn:16484/?sid={self.old_session}'
         print(f"刷新URL: {url}")
         self.axWidget.dynamicCall("Navigate(const QString&)", url)
 
+    # 变速输入框
     def open_speed_dialog(self):
         dialog = SpeedControlDialog(self)
         if dialog.exec_():
             pass
 
+    # 静音
     def set_sound_off(self):
         global launcher_name
         sessions = AudioUtilities.GetAllSessions()
@@ -358,6 +372,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                     self.SoundOff.setText("√静音")
                 break
 
+    # 窗口置顶
     def stay_on_top(self):
         global global_is_stay_on_top
         if global_is_stay_on_top:
@@ -370,6 +385,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             global_is_stay_on_top = True
         self.show()
 
+    # 计算器
     def open_calculator(self):
         try:
             if hasattr(self, "calculator_window") and self.calculator_window.isVisible():
@@ -383,6 +399,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             QtWidgets.QMessageBox.critical(self, "错误", f"打开计算器窗口失败: {e}")
             print(f"Error: {e}")
 
+    # 启停脚本
     def enable_script(self):
         global global_is_scripts_enabled, global_script_path, script_thread, is_running
         if not global_is_scripts_enabled:
@@ -392,15 +409,16 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             print("脚本功能已启用")
             self.EnableScripts.setText("√启用脚本功能")
             global_is_scripts_enabled = True
-            is_running = True  # 启用脚本时，设置脚本运行标志为 True
+            is_running = True
             script_thread = threading.Thread(target=self.run_script, daemon=True)
             script_thread.start()
         else:
             print("脚本功能已禁用")
             self.EnableScripts.setText("启用脚本功能")
             global_is_scripts_enabled = False
-            is_running = False  # 禁用脚本时，设置脚本运行标志为 False
+            is_running = False
 
+    # 选定脚本窗口
     def open_load_script_dialog(self):
         global global_script_path
         dialog = LoadScriptDialog(self)
@@ -409,6 +427,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             if global_script_path:
                 print(f"加载脚本: {global_script_path}")
 
+    # 加载脚本
     def load_script_config(self, config_path):
         try:
             with open(config_path, 'r', encoding='utf-8') as f:
@@ -417,7 +436,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             print(f"加载配置文件失败: {e}")
             return None
 
-    # 快捷键启停脚本功能
+    # 快捷键启停脚本
     def on_press(self, key):
         global is_running, global_is_scripts_enabled
         try:
@@ -442,11 +461,12 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         except AttributeError:
             pass
 
+    # 键盘监听器
     def start_keyboard_listener(self):
         listener = Listener(on_press=self.on_press)
         listener.start()
 
-    # 主任务执行逻辑
+    # 识图点击逻辑
     def run_script(self):
         global global_is_scripts_enabled, dm
         try:
@@ -555,7 +575,6 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             global_is_scripts_enabled = False
 
     # 执行额外操作逻辑
-    # 执行额外操作逻辑
     def perform_extra_action(self, extra_action_config):
         steps = extra_action_config.get("actions", [])  # 使用 "actions" 字段
         if not steps:
@@ -598,6 +617,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
         print("[额外操作] 额外操作完成，继续循环")
 
+    # 重写关闭窗口事件
     def closeEvent(self, event):
         global global_is_scripts_enabled, script_thread
         if global_is_scripts_enabled and (script_thread and script_thread.is_alive()):
@@ -623,6 +643,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             self.close_all_child_windows()
             event.accept()
 
+    # 关闭所有子窗口
     def close_all_child_windows(self):
         for child_window in self.findChildren(QtWidgets.QWidget):
             if isinstance(child_window, QtWidgets.QDialog) and child_window.isVisible():
@@ -630,8 +651,8 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                 child_window.close()
 
 
-##################### 重写全局异常处理函数 #####################
 def handle_uncaught_exception(exc_type, exc_value, exc_traceback):
+    """重写全局异常处理函数"""
     global global_is_scripts_enabled, script_thread
     print("发生未捕获的异常，正在注销大漠插件并终止线程")
     global_is_scripts_enabled = False
@@ -640,11 +661,11 @@ def handle_uncaught_exception(exc_type, exc_value, exc_traceback):
     unregister_dm()
     sys.__excepthook__(exc_type, exc_value, exc_traceback)
 
-
+# 注册全局异常处理函数
 sys.excepthook = handle_uncaught_exception
 
-##################### 主函数 #####################
 if __name__ == '__main__':
+    """主函数"""
     app = QApplication(sys.argv)
     app_icon_path = resource_path('img/logo.ico')
     app.setWindowIcon(QIcon(app_icon_path))
