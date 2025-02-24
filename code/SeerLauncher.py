@@ -172,6 +172,7 @@ class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+
         input_fields = [
             self.LevelEdit,
             self.IndividualEdit,
@@ -187,13 +188,12 @@ class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
         for field in input_fields:
             if field:
                 field.setAlignment(QtCore.Qt.AlignCenter)
-        if not hasattr(self, "CalculateButton"):
-            raise AttributeError("UI 文件中缺少 CalculateButton 控件")
-        if not hasattr(self, "LevelEdit"):
-            raise AttributeError("UI 文件中缺少 LevelEdit 控件")
+
         self.CalculateButton.clicked.connect(self.calculate_stats)
         self.CharacterComboBox.currentTextChanged.connect(self.update_character_modifiers)
 
+    # 能力值=[(种族值*2+个体值+学习力/4)×等级/100+5]*性格补正
+    # HP=(种族值*2+个体值+学习力/4)×等级/100+10+等级
     def calculate_stats(self):
         try:
             level = int(self.LevelEdit.text().strip() or 100)
@@ -660,6 +660,7 @@ def handle_uncaught_exception(exc_type, exc_value, exc_traceback):
         script_thread.join()
     unregister_dm()
     sys.__excepthook__(exc_type, exc_value, exc_traceback)
+
 
 # 注册全局异常处理函数
 sys.excepthook = handle_uncaught_exception
