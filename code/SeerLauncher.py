@@ -436,6 +436,11 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             print(f"加载配置文件失败: {e}")
             return None
 
+    # 键盘监听器
+    def start_keyboard_listener(self):
+        listener = Listener(on_press=self.on_press)
+        listener.start()
+
     # 快捷键启停脚本
     def on_press(self, key):
         global is_running, global_is_scripts_enabled
@@ -460,11 +465,6 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                     script_thread.start()
         except AttributeError:
             pass
-
-    # 键盘监听器
-    def start_keyboard_listener(self):
-        listener = Listener(on_press=self.on_press)
-        listener.start()
 
     # 识图点击逻辑
     def run_script(self):
