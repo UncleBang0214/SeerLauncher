@@ -18,6 +18,7 @@ from Ui_SpeedControlWindow import Ui_SpeedControlWindow
 from Ui_CalculatorWindow import Ui_CalculatorWindow
 from Ui_LoadScriptDialogWindow import Ui_LoadScriptDialogWindow
 from Ui_ConfirmExitDialogWindow import Ui_ConfirmExitDialogWindow
+from Ui_EncyclopediaWindow import Ui_EncyclopediaWindow
 
 # 全局变量定义
 launcher_name = "茶杯登录器"  # 登录器名称
@@ -43,7 +44,7 @@ def initialize_dm():
     """初始化大漠插件并注册为全局变量"""
     global dm
     try:
-        dll_path = resource_path('dm.dll')
+        dll_path = resource_path('ini/dm.dll')
         if not os.path.exists(dll_path):
             print(f"未找到dll: {dll_path}")
             return False
@@ -67,7 +68,7 @@ def unregister_dm():
     if dm is not None:
         print("正在注销大漠插件")
         try:
-            dll_path = resource_path('dm.dll')
+            dll_path = resource_path('ini/dm.dll')
             if os.path.exists(dll_path):
                 result = os.system(f"regsvr32 /u /s {dll_path}")
                 if result == 0:
@@ -166,12 +167,194 @@ class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
             print(f"变速时发生错误: {e}")
 
 
+class EncyclopediaWindow(QtWidgets.QMainWindow):
+    """精灵大全"""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # 初始化UI
+        self.ui = Ui_EncyclopediaWindow()
+        self.ui.setupUi(self)
+
+        # 初始化配置
+        self.elf_data = []
+        self.current_filtered_data = []
+
+        # 初始化表格
+        self._setup_table()
+
+        # 连接信号
+        self.ui.searchEdit.textChanged.connect(self.filter_table)
+        self.ui.TurnToCalculator.clicked.connect(self.open_calculator_with_data)
+
+        # 加载数据
+        self.load_data()
+
+        self.calculator_window = None
+
+    def _setup_table(self):
+        """配置表格属性"""
+        self.ui.tableWidget.setAlternatingRowColors(True)
+        self.ui.tableWidget.verticalHeader().setVisible(False)
+        self.ui.tableWidget.setSortingEnabled(True)
+        self.ui.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.ui.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+
+    def load_data(self):
+        """加载精灵数据"""
+        try:
+            data_path = self._get_data_path()
+
+            if not os.path.exists(data_path):
+                raise FileNotFoundError("数据文件不存在")
+
+            with open(data_path, 'r', encoding='utf-8') as f:
+                raw_data = json.load(f)
+                self._validate_data(raw_data)
+                self.elf_data = raw_data
+                self.current_filtered_data = raw_data.copy()
+                self.populate_table(raw_data)
+
+        except Exception as e:
+            self._handle_load_error(e)
+
+    def _get_data_path(self):
+        """获取数据文件路径"""
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        return os.path.join(base_dir, "ini", "encyclopedia_data.json")
+
+    def _validate_data(self, data):
+        """验证数据格式"""
+        required_fields = ["序号", "名称", "体力", "攻击", "特攻", "防御", "特防", "速度", "学习力掉落"]
+
+        for idx, item in enumerate(data):
+            for field in required_fields:
+                if field not in item:
+                    raise ValueError(f"数据格式错误：第 {idx + 1} 条数据缺少 '{field}' 字段")
+
+    def _handle_load_error(self, error):
+        """处理加载错误"""
+        error_msg = {
+            FileNotFoundError: "找不到数据文件：encyclopedia_data.json",
+            json.JSONDecodeError: "数据文件格式错误，请检查JSON格式",
+            ValueError: str(error)
+        }.get(type(error), f"未知错误：{str(error)}")
+
+        QtWidgets.QMessageBox.critical(
+            self,
+            "数据加载失败",
+            error_msg,
+            QtWidgets.QMessageBox.Ok
+        )
+        self.close()
+
+    def populate_table(self, data):
+        """填充表格数据"""
+        self.ui.tableWidget.setRowCount(len(data))
+
+        for row, elf in enumerate(data):
+            self._add_table_row(row, elf)
+
+    def _add_table_row(self, row, elf):
+        """添加单行数据"""
+        columns = [
+            str(elf["序号"]), elf["名称"],
+            str(elf["体力"]), str(elf["攻击"]),
+            str(elf["特攻"]), str(elf["防御"]),
+            str(elf["特防"]), str(elf["速度"]),
+            elf["学习力掉落"]
+        ]
+
+        for col, value in enumerate(columns):
+            item = QtWidgets.QTableWidgetItem(value)
+            item.setTextAlignment(QtCore.Qt.AlignCenter)
+
+            # 序号列特殊处理
+            if col == 0:
+                item.setData(QtCore.Qt.UserRole, elf["序号"])
+
+            self.ui.tableWidget.setItem(row, col, item)
+
+    def filter_table(self, text):
+        """过滤表格内容"""
+        search_text = text.strip().lower()
+
+        if not search_text:
+            self.current_filtered_data = self.elf_data.copy()
+        else:
+            self.current_filtered_data = [
+                elf for elf in self.elf_data
+                if (search_text in elf["名称"].lower()) or
+                   (search_text == str(elf["序号"]))
+            ]
+
+        self.populate_table(self.current_filtered_data)
+
+    def open_calculator_with_data(self):
+        """修复版本：正确传递字典参数"""
+        selected = self.ui.tableWidget.selectedItems()
+        if not selected:
+            QtWidgets.QMessageBox.warning(self, "提示", "请先选择精灵")
+            return
+
+        try:
+            # 获取选中行的数据索引
+            row = selected[0].row()
+            elf_id = int(self.ui.tableWidget.item(row, 0).text())  # 假设第一列是序号
+
+            # 在原始数据中查找对应的精灵
+            selected_elf = next(
+                elf for elf in self.elf_data
+                if elf["序号"] == elf_id
+            )
+
+            # 构建参数字典
+            race_data = {
+                "hp": selected_elf["体力"],
+                "attack": selected_elf["攻击"],
+                "sp_attack": selected_elf["特攻"],
+                "defense": selected_elf["防御"],
+                "sp_defense": selected_elf["特防"],
+                "speed": selected_elf["速度"]
+            }
+
+            # 创建/显示计算器窗口
+            self.calculator_window = CalculatorWindow()
+
+            self.calculator_window.set_race_values(**race_data)
+            self.calculator_window.show()
+
+        except StopIteration:
+            QtWidgets.QMessageBox.critical(self, "错误", "找不到对应的精灵数据")
+        except KeyError as e:
+            QtWidgets.QMessageBox.critical(self, "数据错误", f"缺失必要字段: {str(e)}")
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "错误", f"未知错误: {str(e)}")
+
+    def _open_calculator(self, elf_data):
+        """打开计算器窗口"""
+        calculator = CalculatorWindow()
+        calculator.set_race_values(
+            hp=elf_data["体力"],
+            attack=elf_data["攻击"],
+            sp_attack=elf_data["特攻"],
+            defense=elf_data["防御"],
+            sp_defense=elf_data["特防"],
+            speed=elf_data["速度"]
+        )
+        calculator.show()
+
+
 class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
     """计算器窗口定义及初始化"""
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+
+        # 添加关闭时清理引用的逻辑
+        self.destroyed.connect(self._on_destroy)
 
         input_fields = [
             self.LevelEdit,
@@ -274,6 +457,20 @@ class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
             QtWidgets.QMessageBox.critical(self, "错误", f"更新性格修正失败: {e}")
             print(f"Error: {e}")
 
+    def set_race_values(self, hp, attack, sp_attack, defense, sp_defense, speed):
+        """设置种族值"""
+        self.RaceEdit_1.setText(str(hp))
+        self.RaceEdit_2.setText(str(attack))
+        self.RaceEdit_3.setText(str(sp_attack))
+        self.RaceEdit_4.setText(str(defense))
+        self.RaceEdit_5.setText(str(sp_defense))
+        self.RaceEdit_6.setText(str(speed))
+
+    def _on_destroy(self):
+        # 通知父窗口释放引用
+        if self.parent():
+            self.parent().calculator_ref = None
+
 
 class LoadScriptDialog(QDialog):
     """加载自定义脚本窗口定义及初始化"""
@@ -324,6 +521,8 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.SpeedChange.triggered.connect(self.open_speed_dialog)
         self.SoundOff.triggered.connect(self.set_sound_off)
         self.StayTop.triggered.connect(self.stay_on_top)
+        # 功能
+        self.Encyclopedia.triggered.connect(self.open_encyclopedia)
         self.Calculator.triggered.connect(self.open_calculator)
         # 脚本
         self.EnableScripts.triggered.connect(self.enable_script)
@@ -339,8 +538,8 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
     # 登录
     def navigate_to_target(self):
-        # url = f'https://fanyi.youdao.com/#/TextTranslate'
-        url = f'http://b2.sjcmc.cn:16484/?sid={self.old_session}'
+        url = f'https://fanyi.youdao.com/#/TextTranslate'
+        # url = f'http://b2.sjcmc.cn:16484/?sid={self.old_session}'
         print(f"生成URL: {url}")
         self.axWidget.dynamicCall("Navigate(const QString&)", url)
 
@@ -385,19 +584,17 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             global_is_stay_on_top = True
         self.show()
 
-    # 计算器
+    # 精灵大全窗口
+    def open_encyclopedia(self):
+        self.encyclopedia_window = EncyclopediaWindow(self)
+        self.encyclopedia_window.setWindowIcon(self.windowIcon())
+        self.encyclopedia_window.show()
+
+    # 精灵计算器窗口
     def open_calculator(self):
-        try:
-            if hasattr(self, "calculator_window") and self.calculator_window.isVisible():
-                self.calculator_window.activateWindow()
-                self.calculator_window.raise_()
-            else:
-                self.calculator_window = CalculatorWindow(self)
-                self.calculator_window.setWindowIcon(self.windowIcon())
-                self.calculator_window.show()
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "错误", f"打开计算器窗口失败: {e}")
-            print(f"Error: {e}")
+        self.calculator_window = CalculatorWindow(self)
+        self.calculator_window.setWindowIcon(self.windowIcon())
+        self.calculator_window.show()
 
     # 启停脚本
     def enable_script(self):
@@ -649,6 +846,10 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             if isinstance(child_window, QtWidgets.QDialog) and child_window.isVisible():
                 print(f"关闭子窗口: {child_window.windowTitle()}")
                 child_window.close()
+        for window in QApplication.topLevelWidgets():
+            if window != self and window.isVisible():
+                print(f"关闭游离窗口: {window.windowTitle()}")
+                window.close()
 
 
 def handle_uncaught_exception(exc_type, exc_value, exc_traceback):

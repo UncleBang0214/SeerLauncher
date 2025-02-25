@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>EncyclopediaWindow</class>
+    <widget class="QMainWindow" name="EncyclopediaWindow">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>856</width>
+                <height>430</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>精灵大全</string>
+        </property>
+        <widget class="QWidget" name="centralwidget">
+            <widget class="QLineEdit" name="searchEdit">
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>20</y>
+                        <width>681</width>
+                        <height>41</height>
+                    </rect>
+                </property>
+                <property name="placeholderText">
+                    <string>输入精灵名称/序号进行搜索</string>
+                </property>
+                <property name="clearButtonEnabled">
+                    <bool>true</bool>
+                </property>
+            </widget>
+            <widget class="QTableWidget" name="tableWidget">
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>80</y>
+                        <width>821</width>
+                        <height>331</height>
+                    </rect>
+                </property>
+                <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="columnCount">
+                    <number>9</number>
+                </property>
+                <attribute name="horizontalHeaderVisible">
+                    <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                    <number>80</number>
+                </attribute>
+                <attribute name="horizontalHeaderStretchLastSection">
+                    <bool>true</bool>
+                </attribute>
+                <column>
+                    <property name="text">
+                        <string>序号</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>名称</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>体力</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>攻击</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>特攻</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>防御</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>特防</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>速度</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>学习力掉落</string>
+                    </property>
+                </column>
+            </widget>
+            <widget class="QPushButton" name="TurnToCalculator">
+                <property name="geometry">
+                    <rect>
+                        <x>730</x>
+                        <y>20</y>
+                        <width>111</width>
+                        <height>41</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>进入计算器</string>
+                </property>
+            </widget>
+        </widget>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

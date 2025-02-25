@@ -1,839 +1,839 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CalculatorWindow</class>
- <widget class="QMainWindow" name="CalculatorWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>511</width>
-    <height>368</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>精灵计算器</string>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="CalculateButton">
-    <property name="geometry">
-     <rect>
-      <x>210</x>
-      <y>310</y>
-      <width>101</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>开始计算</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="LevelLabel">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>30</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>等级</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="LevelEdit">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>60</y>
-      <width>50</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>100</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="IndividualLabel">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>30</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>个体</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="IndividualEdit">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>60</y>
-      <width>50</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>31</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="Line" name="line">
-    <property name="windowModality">
-     <enum>Qt::ApplicationModal</enum>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>53</y>
-      <width>460</width>
-      <height>1</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>9</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(0, 0, 0);</string>
-    </property>
-    <property name="lineWidth">
-     <number>3</number>
-    </property>
-    <property name="midLineWidth">
-     <number>0</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="CategoryLabel">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>30</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>项目</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="CategoryLabel_1">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>70</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>体力</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="CategoryLabel_2">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>110</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>攻击</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="CategoryLabel_3">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>150</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>特攻</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="CategoryLabel_4">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>190</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>防御</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="CategoryLabel_5">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>230</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>特防</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="CategoryLabel_6">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>270</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>速度</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="RaceLabel">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>30</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>种族</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="RaceEdit_1">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>60</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="RaceEdit_2">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>100</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="RaceEdit_3">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>140</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="RaceEdit_4">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>180</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="RaceEdit_5">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>220</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="RaceEdit_6">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>260</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="EffortEdit_6">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>260</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="EffortEdit_2">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>100</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="EffortEdit_3">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>140</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="EffortEdit_5">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>220</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="EffortEdit_4">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>180</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="EffortLabel">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>30</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>努力</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="EffortEdit_1">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>60</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="CharacterComboBox">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>60</y>
-      <width>51</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="maxVisibleItems">
-     <number>15</number>
-    </property>
-    <item>
-     <property name="text">
-      <string>固执</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>孤独</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>调皮</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>勇敢</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>保守</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>稳重</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>马虎</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>冷静</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>胆小</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>开朗</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>急躁</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>天真</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>大胆</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>顽皮</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>无虑</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>悠闲</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>沉着</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>慎重</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>温顺</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>狂妄</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>害羞</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>实干</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>认真</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>浮躁</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>坦率</string>
-     </property>
-    </item>
-   </widget>
-   <widget class="QLineEdit" name="CharacterEdit_5">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>260</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>1.0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="CharacterEdit_4">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>220</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>1.0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="CharacterEdit_2">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>140</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0.9</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="CharacterEdit_3">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>180</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>1.0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="CharacterEdit_1">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>100</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>1.1</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="CharacterLabel">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>30</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>性格</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="AbilityLabel">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>30</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>能力</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="SpeedLabel">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>260</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="DefenseLabel">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>180</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="SpDefenseLabel">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>220</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="HPLabel">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>60</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="AttackLabel">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>100</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="SpAttackLabel">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>140</y>
-      <width>50</width>
-      <height>35</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-  </widget>
- </widget>
- <resources/>
- <connections/>
+    <class>CalculatorWindow</class>
+    <widget class="QMainWindow" name="CalculatorWindow">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>511</width>
+                <height>368</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>精灵计算器</string>
+        </property>
+        <widget class="QWidget" name="centralwidget">
+            <widget class="QPushButton" name="CalculateButton">
+                <property name="geometry">
+                    <rect>
+                        <x>210</x>
+                        <y>310</y>
+                        <width>101</width>
+                        <height>41</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>开始计算</string>
+                </property>
+            </widget>
+            <widget class="QLabel" name="LevelLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>30</x>
+                        <y>30</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>等级</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="LevelEdit">
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>60</y>
+                        <width>50</width>
+                        <height>30</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>100</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLabel" name="IndividualLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>100</x>
+                        <y>30</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>个体</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="IndividualEdit">
+                <property name="geometry">
+                    <rect>
+                        <x>90</x>
+                        <y>60</y>
+                        <width>50</width>
+                        <height>30</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>31</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="Line" name="line">
+                <property name="windowModality">
+                    <enum>Qt::ApplicationModal</enum>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>53</y>
+                        <width>460</width>
+                        <height>1</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>9</pointsize>
+                    </font>
+                </property>
+                <property name="styleSheet">
+                    <string notr="true">background-color: rgb(0, 0, 0);</string>
+                </property>
+                <property name="lineWidth">
+                    <number>3</number>
+                </property>
+                <property name="midLineWidth">
+                    <number>0</number>
+                </property>
+                <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                </property>
+            </widget>
+            <widget class="QLabel" name="CategoryLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>160</x>
+                        <y>30</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>项目</string>
+                </property>
+            </widget>
+            <widget class="QLabel" name="CategoryLabel_1">
+                <property name="geometry">
+                    <rect>
+                        <x>160</x>
+                        <y>70</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>体力</string>
+                </property>
+            </widget>
+            <widget class="QLabel" name="CategoryLabel_2">
+                <property name="geometry">
+                    <rect>
+                        <x>160</x>
+                        <y>110</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>攻击</string>
+                </property>
+            </widget>
+            <widget class="QLabel" name="CategoryLabel_3">
+                <property name="geometry">
+                    <rect>
+                        <x>160</x>
+                        <y>150</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>特攻</string>
+                </property>
+            </widget>
+            <widget class="QLabel" name="CategoryLabel_4">
+                <property name="geometry">
+                    <rect>
+                        <x>160</x>
+                        <y>190</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>防御</string>
+                </property>
+            </widget>
+            <widget class="QLabel" name="CategoryLabel_5">
+                <property name="geometry">
+                    <rect>
+                        <x>160</x>
+                        <y>230</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>特防</string>
+                </property>
+            </widget>
+            <widget class="QLabel" name="CategoryLabel_6">
+                <property name="geometry">
+                    <rect>
+                        <x>160</x>
+                        <y>270</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>速度</string>
+                </property>
+            </widget>
+            <widget class="QLabel" name="RaceLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>230</x>
+                        <y>30</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>种族</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="RaceEdit_1">
+                <property name="geometry">
+                    <rect>
+                        <x>220</x>
+                        <y>60</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="RaceEdit_2">
+                <property name="geometry">
+                    <rect>
+                        <x>220</x>
+                        <y>100</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="RaceEdit_3">
+                <property name="geometry">
+                    <rect>
+                        <x>220</x>
+                        <y>140</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="RaceEdit_4">
+                <property name="geometry">
+                    <rect>
+                        <x>220</x>
+                        <y>180</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="RaceEdit_5">
+                <property name="geometry">
+                    <rect>
+                        <x>220</x>
+                        <y>220</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="RaceEdit_6">
+                <property name="geometry">
+                    <rect>
+                        <x>220</x>
+                        <y>260</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="EffortEdit_6">
+                <property name="geometry">
+                    <rect>
+                        <x>290</x>
+                        <y>260</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="EffortEdit_2">
+                <property name="geometry">
+                    <rect>
+                        <x>290</x>
+                        <y>100</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="EffortEdit_3">
+                <property name="geometry">
+                    <rect>
+                        <x>290</x>
+                        <y>140</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="EffortEdit_5">
+                <property name="geometry">
+                    <rect>
+                        <x>290</x>
+                        <y>220</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="EffortEdit_4">
+                <property name="geometry">
+                    <rect>
+                        <x>290</x>
+                        <y>180</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLabel" name="EffortLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>300</x>
+                        <y>30</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>努力</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="EffortEdit_1">
+                <property name="geometry">
+                    <rect>
+                        <x>290</x>
+                        <y>60</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QComboBox" name="CharacterComboBox">
+                <property name="geometry">
+                    <rect>
+                        <x>360</x>
+                        <y>60</y>
+                        <width>51</width>
+                        <height>31</height>
+                    </rect>
+                </property>
+                <property name="styleSheet">
+                    <string notr="true"/>
+                </property>
+                <property name="maxVisibleItems">
+                    <number>15</number>
+                </property>
+                <item>
+                    <property name="text">
+                        <string>固执</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>孤独</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>调皮</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>勇敢</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>保守</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>稳重</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>马虎</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>冷静</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>胆小</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>开朗</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>急躁</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>天真</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>大胆</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>顽皮</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>无虑</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>悠闲</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>沉着</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>慎重</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>温顺</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>狂妄</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>害羞</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>实干</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>认真</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>浮躁</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>坦率</string>
+                    </property>
+                </item>
+            </widget>
+            <widget class="QLineEdit" name="CharacterEdit_5">
+                <property name="geometry">
+                    <rect>
+                        <x>360</x>
+                        <y>260</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>1.0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="CharacterEdit_4">
+                <property name="geometry">
+                    <rect>
+                        <x>360</x>
+                        <y>220</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>1.0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="CharacterEdit_2">
+                <property name="geometry">
+                    <rect>
+                        <x>360</x>
+                        <y>140</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0.9</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="CharacterEdit_3">
+                <property name="geometry">
+                    <rect>
+                        <x>360</x>
+                        <y>180</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>1.0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="CharacterEdit_1">
+                <property name="geometry">
+                    <rect>
+                        <x>360</x>
+                        <y>100</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>1.1</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLabel" name="CharacterLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>370</x>
+                        <y>30</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>性格</string>
+                </property>
+            </widget>
+            <widget class="QLabel" name="AbilityLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>440</x>
+                        <y>30</y>
+                        <width>31</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>能力</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="SpeedLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>430</x>
+                        <y>260</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="DefenseLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>430</x>
+                        <y>180</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="SpDefenseLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>430</x>
+                        <y>220</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="HPLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>430</x>
+                        <y>60</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="AttackLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>430</x>
+                        <y>100</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+            <widget class="QLineEdit" name="SpAttackLabel">
+                <property name="geometry">
+                    <rect>
+                        <x>430</x>
+                        <y>140</y>
+                        <width>50</width>
+                        <height>35</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>0</string>
+                </property>
+                <property name="placeholderText">
+                    <string/>
+                </property>
+            </widget>
+        </widget>
+    </widget>
+    <resources/>
+    <connections/>
 </ui>
