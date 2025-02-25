@@ -538,8 +538,8 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
     # 登录
     def navigate_to_target(self):
-        url = f'https://fanyi.youdao.com/#/TextTranslate'
-        # url = f'http://b2.sjcmc.cn:16484/?sid={self.old_session}'
+        # url = f'https://fanyi.youdao.com/#/TextTranslate'
+        url = f'http://b2.sjcmc.cn:16484/?sid={self.old_session}'
         print(f"生成URL: {url}")
         self.axWidget.dynamicCall("Navigate(const QString&)", url)
 
