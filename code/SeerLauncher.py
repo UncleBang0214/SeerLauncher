@@ -1,3 +1,4 @@
+import requests
 from pynput.keyboard import Listener, Key
 import threading
 import time
@@ -83,6 +84,50 @@ def unregister_dm():
         print("大漠插件未初始化，无需注销！")
 
 
+class LoginService:
+    LOGIN_URL = "http://m9.ctymc.cn:20672/seer/customer/login"
+    GAME_URL_TEMPLATE = "http://b2.sjcmc.cn:16484/?sid={session}"
+
+    def __init__(self):
+        self.session = requests.Session()
+        self.session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
+            "Origin": "http://144.48.8.4:88",
+            "Referer": "http://144.48.8.4:88/",
+            "Content-Type": "application/json;charset=UTF-8"
+        })
+
+    def login(self, email: str, password: str) -> dict:
+        """执行登录并返回认证数据"""
+        payload = {
+            "email": email,
+            "password": password.strip()
+        }
+
+        try:
+            response = self.session.post(
+                self.LOGIN_URL,
+                json=payload,
+                timeout=10,
+                verify=False  # 忽略SSL证书验证
+            )
+
+            if response.status_code != 200:
+                raise Exception(f"HTTP错误码: {response.status_code}")
+
+            result = response.json()
+            if result.get('code') != 200:
+                raise Exception(result.get('msg', '未知登录错误'))
+
+            return {
+                "session": result['session'],
+                "token": result['token'],
+                "permissions": result['permissions']
+            }
+
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"网络请求失败: {str(e)}")
+
 def string_to_hex(s):
     """处理账号密码字符串"""
     hex_string = ''.join([format(ord(c), '02x') for c in s])
@@ -112,7 +157,6 @@ class ConfirmExitDialog(QDialog):
 
 
 class LoginDialog(QDialog, Ui_LoginWindow):
-    """登录窗口定义及初始化"""
 
     def __init__(self, parent=None):
         super(LoginDialog, self).__init__(parent)
@@ -121,20 +165,50 @@ class LoginDialog(QDialog, Ui_LoginWindow):
         self.setWindowIcon(self.windowIcon())
 
     def handle_login(self):
-        account = self.accountEdit.text().strip()
-        password = self.passwordEdit.text().strip()
-        if not account or not password:
-            QMessageBox.warning(self, "警告", "账号或密码不能为空！")
+        """处理登录按钮点击"""
+        email = self.accountEdit.text().strip()
+        password = self.passwordEdit.text()
+
+        if not self._validate_input(email, password):
             return
-        if not account.isdigit() or len(account) != 9:
-            QMessageBox.warning(self, "警告", "账号必须是 9 位数字！")
-            return
-        if len(password) > 10:
-            QMessageBox.warning(self, "警告", "密码长度不能超过 10 位！")
-            return
-        old_session = generate_old_session(account, password)
-        self.main_window = MyMainWindow(old_session)
-        self.accept()
+
+        try:
+            service = LoginService()
+            auth_data = service.login(email, password)
+
+            # 拼接URL
+            game_url = service.GAME_URL_TEMPLATE.format(session=auth_data['session'])
+            print("生成地址:", game_url)
+
+            # 启动主窗口
+            self.main_window = MyMainWindow(auth_data)
+            self.main_window.show()
+            self.accept()
+
+        except Exception as e:
+            QMessageBox.critical(self, "登录失败", f"错误详情: {str(e)}")
+            self._clear_password_field()
+
+    def _validate_input(self, email: str, password: str) -> bool:
+        """输入验证"""
+        if not email or not password:
+            QMessageBox.warning(self, "输入错误", "邮箱和密码不能为空")
+            return False
+
+        if "@" not in email or "." not in email.split("@")[-1]:
+            QMessageBox.warning(self, "格式错误", "请输入有效的邮箱地址")
+            return False
+
+        if len(password) < 6:
+            QMessageBox.warning(self, "密码过短", "密码长度不能少于6位")
+            return False
+
+        return True
+
+    def _clear_password_field(self):
+        """清空密码输入"""
+        self.passwordEdit.clear()
+        self.passwordEdit.setFocus()
 
 
 class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
@@ -498,18 +572,12 @@ class LoadScriptDialog(QDialog):
 class MyMainWindow(QMainWindow, Ui_MainWindow):
     """主窗口定义及初始化"""
 
-    def __init__(self, old_session):
+    def __init__(self, auth_data: dict):
         super(MyMainWindow, self).__init__()
         self.setupUi(self)
-        # activeX控件
-        self.axWidget = QAxContainer.QAxWidget(self.centralwidget)
-        self.axWidget.setGeometry(QRect(-25, -20, 1024, 700))
-        self.axWidget.setControl("{8856F961-340A-11D0-A96B-00C04FD705A2}")
-        self.axWidget.setProperty("DisplayAlerts", False)
-        self.axWidget.setProperty("DisplayScrollBars", False)
-        # 登录和刷新
-        self.old_session = old_session
-        self.navigate_to_target()
+
+        self.auth_data = auth_data
+        self.init_components()
         self.ReFresh.triggered.connect(self.refresh_page)
         # 菜单
         self.SpeedChange.triggered.connect(self.open_speed_dialog)
@@ -530,18 +598,24 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         # 键盘监听器
         self.start_keyboard_listener()
 
+    def init_components(self):
+        """初始化浏览器组件"""
+        self.axWidget = QAxContainer.QAxWidget(self.centralwidget)
+        self.axWidget.setGeometry(QRect(-25, -20, 1024, 700))
+        self.axWidget.setControl("{8856F961-340A-11D0-A96B-00C04FD705A2}")
+        self.navigate_to_game()
+
     # 登录
-    def navigate_to_target(self):
-        url = f'https://fanyi.youdao.com/#/TextTranslate'
-        # url = f'http://b2.sjcmc.cn:16484/?sid={self.old_session}'
-        print(f"生成URL: {url}")
-        self.axWidget.dynamicCall("Navigate(const QString&)", url)
+    def navigate_to_game(self):
+        game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
+        print("加载:", game_url)
+        self.axWidget.dynamicCall("Navigate(const QString&)", game_url)
 
     # 刷新
     def refresh_page(self):
-        url = f'http://b2.sjcmc.cn:16484/?sid={self.old_session}'
-        print(f"刷新URL: {url}")
-        self.axWidget.dynamicCall("Navigate(const QString&)", url)
+        game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
+        print("刷新:", game_url)
+        self.axWidget.dynamicCall("Navigate(const QString&)", game_url)
 
     # 变速输入框
     def open_speed_dialog(self):
