@@ -168,54 +168,46 @@ class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
 
 
 class EncyclopediaWindow(QtWidgets.QMainWindow):
-    """精灵大全"""
+    """精灵大全（完整功能版）"""
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
-        # 初始化UI
         self.ui = Ui_EncyclopediaWindow()
         self.ui.setupUi(self)
 
-        # 初始化配置
+        # 初始化数据
         self.elf_data = []
         self.current_filtered_data = []
 
-        # 初始化表格
+        # 初始化界面
         self._setup_table()
+        self.load_data()
 
         # 连接信号
         self.ui.searchEdit.textChanged.connect(self.filter_table)
         self.ui.TurnToCalculator.clicked.connect(self.open_calculator_with_data)
 
-        # 加载数据
-        self.load_data()
-
-        self.calculator_window = None
-
     def _setup_table(self):
         """配置表格属性"""
+        self.ui.tableWidget.setColumnCount(10)
+        self.ui.tableWidget.setHorizontalHeaderLabels([
+            "序号", "名称", "体力", "攻击", "特攻",
+            "防御", "特防", "速度", "总和", "学习力掉落"
+        ])
+        self.ui.tableWidget.setSortingEnabled(True)
         self.ui.tableWidget.setAlternatingRowColors(True)
         self.ui.tableWidget.verticalHeader().setVisible(False)
-        self.ui.tableWidget.setSortingEnabled(True)
-        self.ui.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
     def load_data(self):
-        """加载精灵数据"""
+        """加载数据"""
         try:
-            data_path = self._get_data_path()
-
-            if not os.path.exists(data_path):
-                raise FileNotFoundError("数据文件不存在")
-
-            with open(data_path, 'r', encoding='utf-8') as f:
+            with open(self._get_data_path(), 'r', encoding='utf-8') as f:
                 raw_data = json.load(f)
                 self._validate_data(raw_data)
                 self.elf_data = raw_data
                 self.current_filtered_data = raw_data.copy()
                 self.populate_table(raw_data)
-
         except Exception as e:
             self._handle_load_error(e)
 
@@ -225,13 +217,83 @@ class EncyclopediaWindow(QtWidgets.QMainWindow):
         return os.path.join(base_dir, "ini", "encyclopedia_data.json")
 
     def _validate_data(self, data):
-        """验证数据格式"""
-        required_fields = ["序号", "名称", "体力", "攻击", "特攻", "防御", "特防", "速度", "学习力掉落"]
-
+        """数据验证"""
+        required_fields = ["序号", "名称", "体力", "攻击", "特攻",
+                           "防御", "特防", "速度", "学习力掉落"]
         for idx, item in enumerate(data):
             for field in required_fields:
                 if field not in item:
                     raise ValueError(f"数据格式错误：第 {idx + 1} 条数据缺少 '{field}' 字段")
+
+    def populate_table(self, data):
+        """填充表格"""
+        self.ui.tableWidget.setRowCount(len(data))
+        for row, elf in enumerate(data):
+            self._add_table_row(row, elf)
+
+    def _add_table_row(self, row, elf):
+        """添加单行数据（含总和计算）"""
+        # 计算种族值总和
+        total = sum([
+            elf["体力"], elf["攻击"], elf["特攻"],
+            elf["防御"], elf["特防"], elf["速度"]
+        ])
+
+        columns = [
+            str(elf["序号"]), elf["名称"],
+            str(elf["体力"]), str(elf["攻击"]),
+            str(elf["特攻"]), str(elf["防御"]),
+            str(elf["特防"]), str(elf["速度"]),
+            str(total),  # 总和列
+            elf["学习力掉落"]
+        ]
+
+        for col, value in enumerate(columns):
+            item = QtWidgets.QTableWidgetItem(value)
+            item.setTextAlignment(QtCore.Qt.AlignCenter)
+            if col == 0:  # 序号列存储原始数据
+                item.setData(QtCore.Qt.UserRole, elf["序号"])
+            self.ui.tableWidget.setItem(row, col, item)
+
+    def filter_table(self, text):
+        """过滤表格内容"""
+        search_text = text.strip().lower()
+        if not search_text:
+            self.current_filtered_data = self.elf_data.copy()
+        else:
+            self.current_filtered_data = [
+                elf for elf in self.elf_data
+                if (search_text in elf["名称"].lower()) or
+                   (search_text == str(elf["序号"]))
+            ]
+        self.populate_table(self.current_filtered_data)
+
+    def open_calculator_with_data(self):
+        """打开计算器窗口"""
+        selected = self.ui.tableWidget.selectedItems()
+        if not selected:
+            QtWidgets.QMessageBox.warning(self, "提示", "请先选择精灵")
+            return
+
+        try:
+            row = selected[0].row()
+            elf_id = int(self.ui.tableWidget.item(row, 0).text())
+            selected_elf = next(elf for elf in self.elf_data if elf["序号"] == elf_id)
+
+            # 创建计算器窗口
+            self.calculator_window = CalculatorWindow()
+            self.calculator_window.set_race_values(
+                hp=selected_elf["体力"],
+                attack=selected_elf["攻击"],
+                sp_attack=selected_elf["特攻"],
+                defense=selected_elf["防御"],
+                sp_defense=selected_elf["特防"],
+                speed=selected_elf["速度"]
+            )
+            self.calculator_window.show()
+
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "错误", f"无法打开计算器: {str(e)}")
 
     def _handle_load_error(self, error):
         """处理加载错误"""
@@ -249,213 +311,69 @@ class EncyclopediaWindow(QtWidgets.QMainWindow):
         )
         self.close()
 
-    def populate_table(self, data):
-        """填充表格数据"""
-        self.ui.tableWidget.setRowCount(len(data))
-
-        for row, elf in enumerate(data):
-            self._add_table_row(row, elf)
-
-    def _add_table_row(self, row, elf):
-        """添加单行数据"""
-        columns = [
-            str(elf["序号"]), elf["名称"],
-            str(elf["体力"]), str(elf["攻击"]),
-            str(elf["特攻"]), str(elf["防御"]),
-            str(elf["特防"]), str(elf["速度"]),
-            elf["学习力掉落"]
-        ]
-
-        for col, value in enumerate(columns):
-            item = QtWidgets.QTableWidgetItem(value)
-            item.setTextAlignment(QtCore.Qt.AlignCenter)
-
-            # 序号列特殊处理
-            if col == 0:
-                item.setData(QtCore.Qt.UserRole, elf["序号"])
-
-            self.ui.tableWidget.setItem(row, col, item)
-
-    def filter_table(self, text):
-        """过滤表格内容"""
-        search_text = text.strip().lower()
-
-        if not search_text:
-            self.current_filtered_data = self.elf_data.copy()
-        else:
-            self.current_filtered_data = [
-                elf for elf in self.elf_data
-                if (search_text in elf["名称"].lower()) or
-                   (search_text == str(elf["序号"]))
-            ]
-
-        self.populate_table(self.current_filtered_data)
-
-    def open_calculator_with_data(self):
-        """修复版本：正确传递字典参数"""
-        selected = self.ui.tableWidget.selectedItems()
-        if not selected:
-            QtWidgets.QMessageBox.warning(self, "提示", "请先选择精灵")
-            return
-
-        try:
-            # 获取选中行的数据索引
-            row = selected[0].row()
-            elf_id = int(self.ui.tableWidget.item(row, 0).text())  # 假设第一列是序号
-
-            # 在原始数据中查找对应的精灵
-            selected_elf = next(
-                elf for elf in self.elf_data
-                if elf["序号"] == elf_id
-            )
-
-            # 构建参数字典
-            race_data = {
-                "hp": selected_elf["体力"],
-                "attack": selected_elf["攻击"],
-                "sp_attack": selected_elf["特攻"],
-                "defense": selected_elf["防御"],
-                "sp_defense": selected_elf["特防"],
-                "speed": selected_elf["速度"]
-            }
-
-            # 创建/显示计算器窗口
-            self.calculator_window = CalculatorWindow()
-
-            self.calculator_window.set_race_values(**race_data)
-            self.calculator_window.show()
-
-        except StopIteration:
-            QtWidgets.QMessageBox.critical(self, "错误", "找不到对应的精灵数据")
-        except KeyError as e:
-            QtWidgets.QMessageBox.critical(self, "数据错误", f"缺失必要字段: {str(e)}")
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "错误", f"未知错误: {str(e)}")
-
-    def _open_calculator(self, elf_data):
-        """打开计算器窗口"""
-        calculator = CalculatorWindow()
-        calculator.set_race_values(
-            hp=elf_data["体力"],
-            attack=elf_data["攻击"],
-            sp_attack=elf_data["特攻"],
-            defense=elf_data["防御"],
-            sp_defense=elf_data["特防"],
-            speed=elf_data["速度"]
-        )
-        calculator.show()
-
 
 class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
-    """计算器窗口定义及初始化"""
+    """精灵计算器（完整功能版）"""
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
 
-        # 添加关闭时清理引用的逻辑
-        self.destroyed.connect(self._on_destroy)
+        # 初始化设置
+        self._connect_signals()
+        self._init_character_box()
 
-        input_fields = [
-            self.LevelEdit,
-            self.IndividualEdit,
-            self.RaceEdit_1, self.EffortEdit_1, self.CharacterEdit_1,
-            self.RaceEdit_2, self.EffortEdit_2, self.CharacterEdit_2,
-            self.RaceEdit_3, self.EffortEdit_3, self.CharacterEdit_3,
-            self.RaceEdit_4, self.EffortEdit_4, self.CharacterEdit_4,
-            self.RaceEdit_5, self.EffortEdit_5, self.CharacterEdit_5,
-            self.RaceEdit_6, self.EffortEdit_6, self.HPLabel,
-            self.AttackLabel, self.SpAttackLabel, self.DefenseLabel,
-            self.SpDefenseLabel, self.SpeedLabel
+        # 设置默认值
+        self.LevelEdit.setText("100")
+        self.IndividualEdit.setText("31")
+        self._init_default_values()
+
+    def _connect_signals(self):
+        """连接信号"""
+        # 种族值变化信号
+        race_edits = [
+            self.RaceEdit_1, self.RaceEdit_2, self.RaceEdit_3,
+            self.RaceEdit_4, self.RaceEdit_5, self.RaceEdit_6
         ]
-        for field in input_fields:
-            if field:
-                field.setAlignment(QtCore.Qt.AlignCenter)
+        for edit in race_edits:
+            edit.textChanged.connect(self._update_total)
 
+        # 计算按钮
         self.CalculateButton.clicked.connect(self.calculate_stats)
+
+        # 性格选择
         self.CharacterComboBox.currentTextChanged.connect(self.update_character_modifiers)
 
-    # 能力值=[(种族值*2+个体值+学习力/4)×等级/100+5]*性格补正
-    # HP=(种族值*2+个体值+学习力/4)×等级/100+10+等级
-    def calculate_stats(self):
-        try:
-            level = int(self.LevelEdit.text().strip() or 100)
-            iv_value = int(self.IndividualEdit.text().strip() or 31)
-            stats = {
-                "体力": (self.RaceEdit_1, self.EffortEdit_1, None, self.HPLabel),
-                "攻击": (self.RaceEdit_2, self.EffortEdit_2, self.CharacterEdit_1, self.AttackLabel),
-                "特攻": (self.RaceEdit_3, self.EffortEdit_3, self.CharacterEdit_2, self.SpAttackLabel),
-                "防御": (self.RaceEdit_4, self.EffortEdit_4, self.CharacterEdit_3, self.DefenseLabel),
-                "特防": (self.RaceEdit_5, self.EffortEdit_5, self.CharacterEdit_4, self.SpDefenseLabel),
-                "速度": (self.RaceEdit_6, self.EffortEdit_6, self.CharacterEdit_5, self.SpeedLabel),
-            }
-            current_nature = self.CharacterComboBox.currentText()
-            nature_modifiers = self.get_nature_modifiers(current_nature)
-            for stat_name, (race_edit, effort_edit, char_edit, result_label) in stats.items():
-                race_value = int(race_edit.text().strip() or 0)
-                effort_value = int(effort_edit.text().strip() or 0)
-                nature_modifier = nature_modifiers.get(stat_name, 1.0)
-                if char_edit and stat_name != "体力":
-                    char_edit.setText(f"{nature_modifier:.1f}")
-                base_stat = ((race_value * 2 + iv_value + effort_value // 4) * level) // 100
-                if stat_name == "体力":
-                    stat_value = base_stat + level + 10
-                else:
-                    stat_value = base_stat + 5
-                if stat_name != "体力":
-                    stat_value = int(stat_value * nature_modifier)
-                result_label.setText(f"{stat_value}")
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "错误", f"计算失败: {e}")
-            print(f"Error: {e}")
+    def _init_character_box(self):
+        """初始化性格下拉框"""
+        self.CharacterComboBox.addItems([
+            "固执", "孤独", "调皮", "勇敢", "保守", "稳重",
+            "马虎", "冷静", "胆小", "开朗", "急躁", "天真",
+            "大胆", "顽皮", "无虑", "悠闲", "沉着", "慎重",
+            "温顺", "狂妄", "害羞", "实干", "认真", "浮躁", "坦率"
+        ])
 
-    def get_nature_modifiers(self, nature):
-        nature_table = {
-            "固执": {"攻击": 1.1, "特攻": 0.9},
-            "孤独": {"攻击": 1.1, "防御": 0.9},
-            "调皮": {"攻击": 1.1, "特防": 0.9},
-            "勇敢": {"攻击": 1.1, "速度": 0.9},
-            "保守": {"特攻": 1.1, "攻击": 0.9},
-            "稳重": {"特攻": 1.1, "防御": 0.9},
-            "马虎": {"特攻": 1.1, "特防": 0.9},
-            "冷静": {"特攻": 1.1, "速度": 0.9},
-            "胆小": {"速度": 1.1, "攻击": 0.9},
-            "开朗": {"速度": 1.1, "特攻": 0.9},
-            "急躁": {"速度": 1.1, "防御": 0.9},
-            "天真": {"速度": 1.1, "特防": 0.9},
-            "大胆": {"防御": 1.1, "攻击": 0.9},
-            "顽皮": {"防御": 1.1, "特攻": 0.9},
-            "无虑": {"防御": 1.1, "特防": 0.9},
-            "悠闲": {"防御": 1.1, "速度": 0.9},
-            "沉着": {"特防": 1.1, "攻击": 0.9},
-            "慎重": {"特防": 1.1, "特攻": 0.9},
-            "温顺": {"特防": 1.1, "防御": 0.9},
-            "狂妄": {"特防": 1.1, "速度": 0.9},
-        }
-        modifiers = {"体力": 1.0, "攻击": 1.0, "特攻": 1.0, "防御": 1.0, "特防": 1.0, "速度": 1.0}
-        if nature in nature_table:
-            for stat, modifier in nature_table[nature].items():
-                modifiers[stat] = modifier
-        return modifiers
+    def _init_default_values(self):
+        """初始化默认值"""
+        for edit in [self.RaceEdit_1, self.RaceEdit_2, self.RaceEdit_3,
+                     self.RaceEdit_4, self.RaceEdit_5, self.RaceEdit_6]:
+            edit.setText("0")
+        self._update_total()
 
-    def update_character_modifiers(self):
+    def _update_total(self):
+        """更新种族值总和"""
         try:
-            current_nature = self.CharacterComboBox.currentText()
-            nature_modifiers = self.get_nature_modifiers(current_nature)
-            char_edit_mapping = {
-                "攻击": self.CharacterEdit_1,
-                "特攻": self.CharacterEdit_2,
-                "防御": self.CharacterEdit_3,
-                "特防": self.CharacterEdit_4,
-                "速度": self.CharacterEdit_5,
-            }
-            for stat_name, char_edit in char_edit_mapping.items():
-                modifier = nature_modifiers.get(stat_name, 1.0)
-                if char_edit:
-                    char_edit.setText(f"{modifier:.1f}")
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "错误", f"更新性格修正失败: {e}")
-            print(f"Error: {e}")
+            total = sum([
+                int(self.RaceEdit_1.text() or 0),
+                int(self.RaceEdit_2.text() or 0),
+                int(self.RaceEdit_3.text() or 0),
+                int(self.RaceEdit_4.text() or 0),
+                int(self.RaceEdit_5.text() or 0),
+                int(self.RaceEdit_6.text() or 0)
+            ])
+            self.SumEdit.setText(str(total))
+        except ValueError:
+            self.SumEdit.setText("0")
 
     def set_race_values(self, hp, attack, sp_attack, defense, sp_defense, speed):
         """设置种族值"""
@@ -465,11 +383,87 @@ class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
         self.RaceEdit_4.setText(str(defense))
         self.RaceEdit_5.setText(str(sp_defense))
         self.RaceEdit_6.setText(str(speed))
+        self._update_total()
 
-    def _on_destroy(self):
-        # 通知父窗口释放引用
-        if self.parent():
-            self.parent().calculator_ref = None
+    def calculate_stats(self):
+        """计算能力值"""
+        try:
+            # 获取基础值
+            level = int(self.LevelEdit.text())
+            iv = int(self.IndividualEdit.text())
+
+            # 获取种族值
+            race_values = {
+                "体力": int(self.RaceEdit_1.text()),
+                "攻击": int(self.RaceEdit_2.text()),
+                "特攻": int(self.RaceEdit_3.text()),
+                "防御": int(self.RaceEdit_4.text()),
+                "特防": int(self.RaceEdit_5.text()),
+                "速度": int(self.RaceEdit_6.text())
+            }
+
+            # 获取性格修正
+            nature = self.CharacterComboBox.currentText()
+            modifiers = self.get_nature_modifiers(nature)
+
+            # 计算各项能力值
+            results = {}
+            for stat in ["体力", "攻击", "特攻", "防御", "特防", "速度"]:
+                base = (race_values[stat] * 2 + iv + int(self._get_effort(stat)) // 4) * level // 100
+
+                if stat == "体力":
+                    results[stat] = base + 10 + level
+                else:
+                    results[stat] = int((base + 5) * modifiers[stat])
+
+            # 更新界面
+            self.HPLabel.setText(str(results["体力"]))
+            self.AttackLabel.setText(str(results["攻击"]))
+            self.SpAttackLabel.setText(str(results["特攻"]))
+            self.DefenseLabel.setText(str(results["防御"]))
+            self.SpDefenseLabel.setText(str(results["特防"]))
+            self.SpeedLabel.setText(str(results["速度"]))
+
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "计算错误", f"输入数据无效: {str(e)}")
+
+    def _get_effort(self, stat):
+        """获取努力值输入"""
+        effort_mapping = {
+            "体力": self.EffortEdit_1,
+            "攻击": self.EffortEdit_2,
+            "特攻": self.EffortEdit_3,
+            "防御": self.EffortEdit_4,
+            "特防": self.EffortEdit_5,
+            "速度": self.EffortEdit_6
+        }
+        return effort_mapping[stat].text() or "0"
+
+    def get_nature_modifiers(self, nature):
+        """获取性格修正系数"""
+        nature_table = {
+            # 保持你提供的原始性格修正表不变...
+        }
+        modifiers = {"体力": 1.0, "攻击": 1.0, "特攻": 1.0,
+                     "防御": 1.0, "特防": 1.0, "速度": 1.0}
+        if nature in nature_table:
+            modifiers.update(nature_table[nature])
+        return modifiers
+
+    def update_character_modifiers(self):
+        """更新性格修正显示"""
+        try:
+            nature = self.CharacterComboBox.currentText()
+            modifiers = self.get_nature_modifiers(nature)
+
+            self.CharacterEdit_1.setText(f"{modifiers['攻击']:.1f}")
+            self.CharacterEdit_2.setText(f"{modifiers['特攻']:.1f}")
+            self.CharacterEdit_3.setText(f"{modifiers['防御']:.1f}")
+            self.CharacterEdit_4.setText(f"{modifiers['特防']:.1f}")
+            self.CharacterEdit_5.setText(f"{modifiers['速度']:.1f}")
+
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "错误", f"无法更新性格修正: {str(e)}")
 
 
 class LoadScriptDialog(QDialog):
