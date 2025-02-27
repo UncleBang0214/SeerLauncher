@@ -6,9 +6,21 @@
             <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>856</width>
-                <height>430</height>
+                <width>961</width>
+                <height>434</height>
             </rect>
+        </property>
+        <property name="minimumSize">
+            <size>
+                <width>961</width>
+                <height>434</height>
+            </size>
+        </property>
+        <property name="maximumSize">
+            <size>
+                <width>961</width>
+                <height>434</height>
+            </size>
         </property>
         <property name="windowTitle">
             <string>精灵大全</string>
@@ -35,9 +47,21 @@
                     <rect>
                         <x>20</x>
                         <y>80</y>
-                        <width>821</width>
+                        <width>921</width>
                         <height>331</height>
                     </rect>
+                </property>
+                <property name="minimumSize">
+                    <size>
+                        <width>921</width>
+                        <height>331</height>
+                    </size>
+                </property>
+                <property name="maximumSize">
+                    <size>
+                        <width>921</width>
+                        <height>331</height>
+                    </size>
                 </property>
                 <property name="editTriggers">
                     <set>QAbstractItemView::NoEditTriggers</set>
@@ -46,7 +70,7 @@
                     <enum>QAbstractItemView::SelectRows</enum>
                 </property>
                 <property name="columnCount">
-                    <number>9</number>
+                    <number>10</number>
                 </property>
                 <attribute name="horizontalHeaderVisible">
                     <bool>true</bool>
@@ -99,6 +123,11 @@
                 </column>
                 <column>
                     <property name="text">
+                        <string>总和</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
                         <string>学习力掉落</string>
                     </property>
                 </column>
@@ -108,7 +137,7 @@
                     <rect>
                         <x>730</x>
                         <y>20</y>
-                        <width>111</width>
+                        <width>201</width>
                         <height>41</height>
                     </rect>
                 </property>
