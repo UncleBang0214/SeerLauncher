@@ -128,6 +128,7 @@ class LoginService:
         except requests.exceptions.RequestException as e:
             raise Exception(f"网络请求失败: {str(e)}")
 
+
 def string_to_hex(s):
     """处理账号密码字符串"""
     hex_string = ''.join([format(ord(c), '02x') for c in s])
@@ -286,9 +287,10 @@ class EncyclopediaWindow(QtWidgets.QMainWindow):
             self._handle_load_error(e)
 
     def _get_data_path(self):
-        """获取数据文件路径"""
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        return os.path.join(base_dir, "ini", "encyclopedia_data.json")
+        data_path = resource_path("ini/encyclopedia_data.json")
+        if not os.path.exists(data_path):
+            raise FileNotFoundError(f"数据文件缺失: {data_path}")
+        return data_path
 
     def _validate_data(self, data):
         """数据验证"""
@@ -516,7 +518,42 @@ class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
     def get_nature_modifiers(self, nature):
         """获取性格修正系数"""
         nature_table = {
-            # 保持你提供的原始性格修正表不变...
+            # 攻击↑ 特攻↓
+            "固执": {"攻击": 1.1, "特攻": 0.9},
+            "孤独": {"攻击": 1.1, "防御": 0.9},
+            "调皮": {"攻击": 1.1, "特防": 0.9},
+            "勇敢": {"攻击": 1.1, "速度": 0.9},
+
+            # 特攻↑ 攻击↓
+            "保守": {"特攻": 1.1, "攻击": 0.9},
+            "稳重": {"特攻": 1.1, "防御": 0.9},
+            "马虎": {"特攻": 1.1, "特防": 0.9},
+            "冷静": {"特攻": 1.1, "速度": 0.9},
+
+            # 速度↑
+            "胆小": {"速度": 1.1, "攻击": 0.9},
+            "开朗": {"速度": 1.1, "特攻": 0.9},
+            "急躁": {"速度": 1.1, "防御": 0.9},
+            "天真": {"速度": 1.1, "特防": 0.9},
+
+            # 防御↑
+            "大胆": {"防御": 1.1, "攻击": 0.9},
+            "顽皮": {"防御": 1.1, "特攻": 0.9},
+            "无虑": {"防御": 1.1, "特防": 0.9},
+            "悠闲": {"防御": 1.1, "速度": 0.9},
+
+            # 特防↑
+            "沉着": {"特防": 1.1, "攻击": 0.9},
+            "慎重": {"特防": 1.1, "特攻": 0.9},
+            "温顺": {"特防": 1.1, "防御": 0.9},
+            "狂妄": {"特防": 1.1, "速度": 0.9},
+
+            # 无修正
+            "害羞": {},
+            "实干": {},
+            "认真": {},
+            "浮躁": {},
+            "坦率": {}
         }
         modifiers = {"体力": 1.0, "攻击": 1.0, "特攻": 1.0,
                      "防御": 1.0, "特防": 1.0, "速度": 1.0}
