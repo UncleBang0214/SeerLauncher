@@ -11,9 +11,11 @@ from pycaw.utils import AudioUtilities
 from win32com.client import Dispatch
 from PyQt5 import QAxContainer, QtWidgets, QtCore
 from PyQt5.QtCore import QRect, pyqtSignal, Qt, QEvent
-from PyQt5.QtWidgets import QMainWindow, QApplication, QDialog, QMessageBox, QFileDialog
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow, QApplication, QDialog, QMessageBox, QFileDialog, QComboBox, QVBoxLayout, \
+    QScrollArea, QWidget, QLabel, QDialogButtonBox, QGraphicsDropShadowEffect
+from PyQt5.QtGui import QIcon, QColor
 from Ui_MainWindow import Ui_MainWindow
+from Ui_OnStartDialogWindow import Ui_OnStartDialogWindow
 from Ui_LoginWindow import Ui_LoginWindow
 from Ui_SpeedControlWindow import Ui_SpeedControlWindow
 from Ui_CalculatorWindow import Ui_CalculatorWindow
@@ -84,6 +86,17 @@ def unregister_dm():
         print("大漠插件未初始化，无需注销！")
 
 
+class OnStartDialog(QtWidgets.QDialog, Ui_OnStartDialogWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+        self.ok_btn = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
+        self.ok_btn.setText("同意并继续")
+        self.cancel_btn = self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel)
+        self.cancel_btn.setText("拒绝并退出")
+
+
 class LoginService:
     LOGIN_URL = "http://m9.ctymc.cn:20672/seer/customer/login"
     GAME_URL_TEMPLATE = "http://b2.sjcmc.cn:16484/?sid={session}"
@@ -137,15 +150,6 @@ def string_to_hex(s):
     return hex_string
 
 
-def generate_old_session(account, password):
-    """根据账号密码生成oldSession"""
-    account_bytes = string_to_hex(password)
-    num = int(account)
-    hex_string = format(num, '08x')
-    old_session = hex_string + hex_string + account_bytes
-    return old_session
-
-
 class ConfirmExitDialog(QDialog):
     """确认退出对话框定义"""
 
@@ -162,21 +166,77 @@ class LoginDialog(QDialog, Ui_LoginWindow):
     def __init__(self, parent=None):
         super(LoginDialog, self).__init__(parent)
         self.setupUi(self)
+
+        # 初始化存储配置
+        self.history_file = resource_path('ini/login.json')
+        os.makedirs(os.path.dirname(self.history_file), exist_ok=True)
+
+        # 初始化界面
+        self.init_ui()
+        self.load_history()
+
+        # 连接信号
         self.confirmButton.clicked.connect(self.handle_login)
+        self.accountEdit.currentTextChanged.connect(self.clear_password)
+
+    def init_ui(self):
+        """初始化界面设置"""
+        # 设置下拉框特性
+        self.accountEdit.setEditable(True)
+        self.accountEdit.setInsertPolicy(QComboBox.InsertAtTop)
+
+        # 保持你原有的窗口图标设置
         self.setWindowIcon(self.windowIcon())
+
+    def load_history(self):
+        """加载历史账号"""
+        try:
+            if os.path.exists(self.history_file):
+                with open(self.history_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    self.accountEdit.addItems(data.get("history_accounts", []))
+        except Exception as e:
+            QMessageBox.warning(self, "警告", f"历史记录加载失败: {str(e)}")
+
+    def save_history(self, account):
+        """保存账号到历史记录"""
+        try:
+            # 获取现有账号（去重处理）
+            history = []
+            if os.path.exists(self.history_file):
+                with open(self.history_file, 'r', encoding='utf-8') as f:
+                    history = json.load(f).get("history_accounts", [])
+
+            # 更新历史记录
+            if account not in history:
+                history.insert(0, account)
+                history = history[:10]  # 保留最近10个账号
+
+                # 写入文件
+                with open(self.history_file, 'w', encoding='utf-8') as f:
+                    json.dump({"history_accounts": history}, f, indent=2)
+
+                # 更新下拉框
+                self.accountEdit.insertItem(0, account)
+        except Exception as e:
+            QMessageBox.warning(self, "错误", f"保存失败: {str(e)}")
+
+    def clear_password(self):
+        """切换账号时清空密码"""
+        self.passwordEdit.clear()
 
     def handle_login(self):
         """处理登录按钮点击"""
-        email = self.accountEdit.text().strip()
-        password = self.passwordEdit.text()
+        account = self.accountEdit.currentText().strip()
+        password = self.passwordEdit.text().strip()
 
-        if not self._validate_input(email, password):
+        if not self._validate_input(account, password):
             return
 
         try:
             service = LoginService()
-            auth_data = service.login(email, password)
-
+            auth_data = service.login(account, password)
+            self.save_history(account)
             # 拼接URL
             game_url = service.GAME_URL_TEMPLATE.format(session=auth_data['session'])
             print("生成地址:", game_url)
@@ -287,7 +347,7 @@ class EncyclopediaWindow(QtWidgets.QMainWindow):
             self._handle_load_error(e)
 
     def _get_data_path(self):
-        data_path = resource_path("ini/encyclopedia_data.json")
+        data_path = resource_path("ini/encyclopedia.json")
         if not os.path.exists(data_path):
             raise FileNotFoundError(f"数据文件缺失: {data_path}")
         return data_path
@@ -374,7 +434,7 @@ class EncyclopediaWindow(QtWidgets.QMainWindow):
     def _handle_load_error(self, error):
         """处理加载错误"""
         error_msg = {
-            FileNotFoundError: "找不到数据文件：encyclopedia_data.json",
+            FileNotFoundError: "找不到数据文件：encyclopedia.json",
             json.JSONDecodeError: "数据文件格式错误，请检查JSON格式",
             ValueError: str(error)
         }.get(type(error), f"未知错误：{str(error)}")
@@ -606,6 +666,47 @@ class LoadScriptDialog(QDialog):
         return self.selected_script_path
 
 
+class MessageDialog(QDialog):
+    def __init__(self, title, content, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle(title)
+        self.setMinimumSize(400, 300)
+
+        # 主布局
+        main_layout = QVBoxLayout()
+
+        # 滚动区域
+        scroll = QScrollArea()
+        content_widget = QWidget()
+        content_layout = QVBoxLayout()
+
+        # 内容标签
+        lbl_content = QLabel(content)
+        lbl_content.setWordWrap(True)
+        lbl_content.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        lbl_content.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
+        # 组装滚动区域
+        content_layout.addWidget(lbl_content)
+        content_widget.setLayout(content_layout)
+        scroll.setWidget(content_widget)
+        scroll.setWidgetResizable(True)
+
+        # 按钮组
+        btn_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Close)
+        btn_box.accepted.connect(self.accept)
+        btn_box.rejected.connect(self.reject)
+        ok_btn = btn_box.button(QDialogButtonBox.Ok)
+        ok_btn.setText('确定')
+        close_btn = btn_box.button(QDialogButtonBox.Close)
+        close_btn.setText('关闭')
+
+        # 最终布局
+        main_layout.addWidget(scroll)
+        main_layout.addWidget(btn_box)
+        self.setLayout(main_layout)
+
+
 class MyMainWindow(QMainWindow, Ui_MainWindow):
     """主窗口定义及初始化"""
 
@@ -613,6 +714,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         super(MyMainWindow, self).__init__()
         self.setupUi(self)
 
+        # 登录
         self.auth_data = auth_data
         self.init_components()
         self.ReFresh.triggered.connect(self.refresh_page)
@@ -620,6 +722,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.SpeedChange.triggered.connect(self.open_speed_dialog)
         self.SoundOff.triggered.connect(self.set_sound_off)
         self.StayTop.triggered.connect(self.stay_on_top)
+        self.ClearCache.triggered.connect(self.clear_cache)
         # 功能
         self.Encyclopedia.triggered.connect(self.open_encyclopedia)
         self.Calculator.triggered.connect(self.open_calculator)
@@ -634,6 +737,9 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             print("大漠插件未加载，禁用脚本功能按钮")
         # 键盘监听器
         self.start_keyboard_listener()
+        # 关于
+        self.About.triggered.connect(self.open_about)
+        self.UpdateLog.triggered.connect(self.open_updatelog)
 
     def init_components(self):
         """初始化浏览器组件"""
@@ -689,6 +795,59 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             global_is_stay_on_top = True
         self.show()
 
+    # 清理IE浏览器缓存
+    def clear_cache(self):
+        try:
+            # 使用系统命令清理IE缓存（需要管理员权限）
+            # 255对应所有缓存类型：历史记录、Cookies、临时文件、表单数据、密码等
+            command = 'RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 255'
+
+            # 执行清理命令
+            result = os.system(command)
+
+            # 检查执行结果
+            if result == 0:
+                QMessageBox.information(
+                    self,
+                    "清理成功",
+                    "IE浏览器缓存已清理！\n\n注意：部分系统可能需要管理员权限才能完全清除",
+                    QMessageBox.Ok
+                )
+            else:
+                QMessageBox.warning(
+                    self,
+                    "清理失败",
+                    "缓存清理未完全成功，请尝试：\n1. 以管理员身份运行登录器\n2. 手动清理浏览器缓存",
+                    QMessageBox.Ok
+                )
+
+            # 附加清理：删除Temporary Internet Files目录内容
+            temp_path = os.path.join(
+                os.environ['USERPROFILE'],
+                'AppData\\Local\\Microsoft\\Windows\\INetCache\\IE'
+            )
+            if os.path.exists(temp_path):
+                for root, dirs, files in os.walk(temp_path):
+                    for file in files:
+                        try:
+                            os.remove(os.path.join(root, file))
+                        except Exception as e:
+                            print(f"删除文件失败 {file}: {str(e)}")
+                    for dir in dirs:
+                        try:
+                            os.rmdir(os.path.join(root, dir))
+                        except Exception as e:
+                            print(f"删除目录失败 {dir}: {str(e)}")
+                print("已手动清理临时文件目录")
+
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "发生错误",
+                f"清理过程中出现异常：{str(e)}",
+                QMessageBox.Ok
+            )
+
     # 精灵大全窗口
     def open_encyclopedia(self):
         self.encyclopedia_window = EncyclopediaWindow(self)
@@ -737,6 +896,74 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             print(f"加载配置文件失败: {e}")
             return None
+
+    # 关于登录器
+    def open_about(self):
+        about_content = """
+        <h2>关于茶杯登录器</h2>
+        <p>版本：v1.0.0</p>
+        <p>开发者：小茶杯</p>
+        <p>描述：</p>
+        <p>下班闲暇之余制作，开发该登录器旨在优化各位的游玩体验</p>
+        <p>纯公益项目，不接受任何形式的赞助！！！</p>
+        <p>通过任何付费途径获得此软件均为上当受骗！！！</p>
+        """
+
+        dialog = MessageDialog("关于", about_content, self)
+        dialog.exec_()
+
+    # 关于更新日志
+    def open_updatelog(self):
+        update_content = """
+        <h2>登录器更新日志</h2>
+        <h3>v1.0.0 (2025-03-03)</h3>
+        <ul>
+            <li>新增清理缓存功能，少许UI美化</li>
+        </ul>
+        <h3>v0.9.9 (2025-02-28)</h3>
+        <ul>
+            <li>新增本地账号存储（不包含密码）、登录器信息</li>
+        </ul>
+        <h3>v0.9.8 (2025-02-27)</h3>
+        <ul>
+            <li>新增爬虫，完善精灵大全格式，重构登录逻辑</li>
+        </ul>
+        <h3>v0.9.7 (2025-02-25)</h3>
+        <ul>
+            <li>新增精灵大全，支持查询、计算器联动</li>
+        </ul>
+        <h3>v0.9.6 (2025-02-23)</h3>
+        <ul>
+            <li>新增快捷键启停脚本，完善识图点击逻辑，额外操作支持识图和循环执行</li>
+        </ul>
+        <h3>v0.9.5 (2025-02-19)</h3>
+        <ul>
+            <li>新增精灵能力值计算器</li>
+        </ul>
+        <h3>v0.9.4 (2025-02-14)</h3>
+        <ul>
+            <li>新增加载定义脚本功能，支持自主启停，支持自定义编写json脚本</li>
+        </ul>
+        <h3>v0.9.3 (2025-02-10)</h3>
+        <ul>
+            <li>新增静音功能，制作识图点击脚本雏形</li>
+        </ul>
+        <h3>v0.9.2 (2025-02-07)</h3>
+        <ul>
+            <li>基于1920*1080分辨率调整窗口大小，添加窗口logo</li>
+        </ul>
+        <h3>v0.9.1 (2025-02-05)</h3>
+        <ul>
+            <li>新增独立的登录窗口，实现了变速功能</li>
+        </ul>
+        <h3>v0.9.0 (2025-02-04)</h3>
+        <ul>
+            <li>实现了加载页面、刷新和绕过登录</li>
+        </ul>
+        """
+
+        dialog = MessageDialog("更新日志", update_content, self)
+        dialog.exec_()
 
     # 键盘监听器
     def start_keyboard_listener(self):
@@ -976,6 +1203,13 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     app_icon_path = resource_path('img/logo.ico')
     app.setWindowIcon(QIcon(app_icon_path))
+
+    # 免责声明
+    start_dialog = OnStartDialog()
+    if start_dialog.exec_() != QDialog.Accepted:
+        print("用户取消启动流程")
+        sys.exit(0)
+
     if initialize_dm():
         atexit.register(unregister_dm)
     login_dialog = LoginDialog()
