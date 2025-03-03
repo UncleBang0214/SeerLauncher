@@ -1,101 +1,150 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>LoginWindow</class>
- <widget class="QWidget" name="LoginWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>487</width>
-    <height>296</height>
-   </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>487</width>
-    <height>296</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>487</width>
-    <height>296</height>
-   </size>
-  </property>
-  <property name="windowTitle">
-   <string>登录</string>
-  </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>img/logo.png</normaloff>img/logo.png</iconset>
-  </property>
-  <property name="autoFillBackground">
-   <bool>false</bool>
-  </property>
-  <widget class="QLineEdit" name="accountEdit">
-   <property name="geometry">
-    <rect>
-     <x>90</x>
-     <y>110</y>
-     <width>290</width>
-     <height>40</height>
-    </rect>
-   </property>
-   <property name="placeholderText">
-    <string>请输入账号</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="passwordEdit">
-   <property name="geometry">
-    <rect>
-     <x>90</x>
-     <y>170</y>
-     <width>290</width>
-     <height>40</height>
-    </rect>
-   </property>
-   <property name="echoMode">
-    <enum>QLineEdit::Password</enum>
-   </property>
-   <property name="placeholderText">
-    <string>请输入密码</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="confirmButton">
-   <property name="geometry">
-    <rect>
-     <x>170</x>
-     <y>230</y>
-     <width>121</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>登录/注册</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>185</x>
-     <y>10</y>
-     <width>91</width>
-     <height>81</height>
-    </rect>
-   </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">image: url(:/login_logo/logo.png);</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
- </widget>
- <resources>
-  <include location="img/login_logo.qrc"/>
- </resources>
- <connections/>
+    <class>LoginWindow</class>
+    <widget class="QWidget" name="LoginWindow">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>487</width>
+                <height>296</height>
+            </rect>
+        </property>
+        <property name="minimumSize">
+            <size>
+                <width>487</width>
+                <height>296</height>
+            </size>
+        </property>
+        <property name="maximumSize">
+            <size>
+                <width>487</width>
+                <height>296</height>
+            </size>
+        </property>
+        <property name="windowTitle">
+            <string>登录</string>
+        </property>
+        <property name="windowIcon">
+            <iconset>
+                <normaloff>img/logo.png</normaloff>img/logo.png
+            </iconset>
+        </property>
+        <widget class="QComboBox" name="accountEdit">
+            <property name="geometry">
+                <rect>
+                    <x>100</x>
+                    <y>110</y>
+                    <width>290</width>
+                    <height>42</height>
+                </rect>
+            </property>
+            <property name="toolTip">
+                <string/>
+            </property>
+            <property name="styleSheet">
+                <string notr="true">/* 基础字体调整 */
+                    QComboBox {
+                    font-size: 17px;
+                    border: 1px solid #D8DEE9;
+                    }
+                    /* 下拉列表样式 */
+                    QComboBox QAbstractItemView {
+                    font-size: 20px;
+                    min-width: 100px; /* 最小下拉列表宽度 */
+                    min-height: 50px; /* 每个选项的最小高度 */
+                    outline: none; /* 移除选中虚线框 */
+                    border: 1px solid #D8DEE9;
+                    }
+                </string>
+            </property>
+            <property name="editable">
+                <bool>true</bool>
+            </property>
+            <property name="insertPolicy">
+                <enum>QComboBox::InsertAtTop</enum>
+            </property>
+            <property name="placeholderText">
+                <string>请输入账号</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" name="passwordEdit">
+            <property name="geometry">
+                <rect>
+                    <x>100</x>
+                    <y>170</y>
+                    <width>290</width>
+                    <height>40</height>
+                </rect>
+            </property>
+            <property name="styleSheet">
+                <string notr="true">/* 输入框样式 */
+                    QLineEdit {
+                    border: 1px solid #D8DEE9;
+                    padding: 5px;
+                    border-radius: 3px;
+                    }
+                </string>
+            </property>
+            <property name="echoMode">
+                <enum>QLineEdit::Password</enum>
+            </property>
+            <property name="placeholderText">
+                <string>请输入密码</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" name="confirmButton">
+            <property name="geometry">
+                <rect>
+                    <x>180</x>
+                    <y>230</y>
+                    <width>121</width>
+                    <height>51</height>
+                </rect>
+            </property>
+            <property name="styleSheet">
+                <string notr="true">/* 按钮通用样式 */
+                    QPushButton {
+                    background-color: #5E81AC;
+                    color: white;
+                    border: none;
+                    padding: 8px 15px;
+                    border-radius: 4px;
+                    min-width: 80px;
+                    }
+
+                    QPushButton:hover {
+                    background-color: #81A1C1;
+                    }
+
+                    QPushButton:pressed {
+                    background-color: #4C6A8C;
+                    }
+                </string>
+            </property>
+            <property name="text">
+                <string>登录</string>
+            </property>
+        </widget>
+        <widget class="QLabel" name="label">
+            <property name="geometry">
+                <rect>
+                    <x>195</x>
+                    <y>10</y>
+                    <width>91</width>
+                    <height>81</height>
+                </rect>
+            </property>
+            <property name="styleSheet">
+                <string notr="true">image: url(:/login_logo/logo.png);</string>
+            </property>
+            <property name="text">
+                <string/>
+            </property>
+        </widget>
+    </widget>
+    <resources>
+        <include location="img/login_logo.qrc"/>
+    </resources>
+    <connections/>
 </ui>
