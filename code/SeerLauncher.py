@@ -918,7 +918,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         <h2>登录器更新日志</h2>
         <h3>v1.0.0 (2025-03-03)</h3>
         <ul>
-            <li>新增清理缓存功能，少许UI美化</li>
+            <li>新增清理缓存功能、UI美化、免责条款</li>
         </ul>
         <h3>v0.9.9 (2025-02-28)</h3>
         <ul>
