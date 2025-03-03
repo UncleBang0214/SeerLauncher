@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OnStartDialogWindow</class>
+ <widget class="QDialog" name="OnStartDialogWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>720</width>
+    <height>535</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>用户协议与免责声明</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog {
+                background: #ffffff;
+                font-family: &quot;Microsoft YaHei&quot;;
+                }
+            </string>
+  </property>
+  <widget class="QLabel" name="label_title">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>10</y>
+     <width>209</width>
+     <height>42</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel {
+                    color: #2c3e50;
+                    font-size: 18px;
+                    font-weight: bold;
+                    padding: 12px 0;
+                    }
+                </string>
+   </property>
+   <property name="text">
+    <string>《用户协议与免责声明》</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QScrollArea" name="scrollArea">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>681</width>
+     <height>411</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QScrollArea {
+                    border: 1px solid #dcdde1;
+                    border-radius: 4px;
+                    background: #f8f9fa;
+                    }
+                    QScrollBar:vertical {
+                    width: 8px;
+                    background: transparent;
+                    }
+                    QScrollBar::handle:vertical {
+                    background: #c8d6e5;
+                    border-radius: 4px;
+                    min-height: 30px;
+                    }
+                </string>
+   </property>
+   <property name="widgetResizable">
+    <bool>true</bool>
+   </property>
+   <widget class="QWidget" name="scrollAreaWidgetContents">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>662</width>
+      <height>1191</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_content">
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+                                    color: #4a5568;
+                                    font-size: 13px;
+                                    line-height: 1.8;
+                                    padding: 20px;
+                                    }
+                                    .warning {
+                                    color: #e74c3c;
+                                    font-weight: bold;
+                                    font-size: 14px;
+                                    }
+                                </string>
+       </property>
+       <property name="text">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'SimSun'; font-size:13px; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;⚠重要警示：本软件为完全免费工具，通过任何付费途径获得均为上当受骗！&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
+&lt;h3 style=&quot; margin-top:20px; margin-bottom:15px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;重要提示&lt;/span&gt;&lt;span style=&quot; font-size:large; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h3&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;1. 本软件为《赛尔号》游戏爱好者开发的第三方工具&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
+&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;一、软件性质&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#e74c3c;&quot;&gt;※ 本软件仅供学习交流使用，禁止用于商业用途 ※&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#e74c3c;&quot;&gt;1.1本软件遵循MIT开源协议，禁止用于商业用途及任何非法场景&lt;/span&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#e74c3c;&quot;&gt;1.2用户使用本软件需遵守《网络安全法》及相关法律法规&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
+&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;二、用户责任&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;2.1 使用者承诺：&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;不用于任何违反《计算机软件保护条例》的行为                                    &lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                                                        &lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;不将该软件用于商业运营、游戏代练等营利行为&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;在游戏允许范围内进行脚本操作                                    &lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                                                        &lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;三、数据安全&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;3.1本地存储的账号信息（login.json）为明文存储&lt;br /&gt;3.2 建议采取以下安全措施：&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                                                        &lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;定期修改游戏密码&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;不在公共设备保存登录信息&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;使用系统级加密工具保护配置文件&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;四、第三方组件&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;4.1集成的大漠插件(dm.dll)需遵守其官方授权条款&lt;br /&gt;4.2 开发者不承担因插件导致的：&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                                                        &lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;游戏客户端异常&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;系统兼容性问题&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;反作弊机制触发的风险&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;五、免责条款&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;出现以下情况时开发者不承担责任：&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;因软件漏洞导致的游戏数据异常&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;未及时更新导致的版本不兼容&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;用户自行修改代码引发的故障&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;网络延迟或中断导致的登录失败&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;六、法律管辖&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;6.1 本协议适用中华人民共和国法律&lt;br /&gt;6.2 争议应优先通过友好协商解决&lt;br /&gt;6.3 协商不成时应向开发者所在地法院提起诉讼                                    &lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:30px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600;&quot;&gt;【再次提醒】本软件不会通过任何渠道收费，谨防受骗！&lt;/span&gt;&lt;span style=&quot; font-size:13px; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                    &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:30px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#e74c3c;&quot;&gt;【最终确认】继续使用即视为已阅读并同意上述所有条款&lt;/span&gt;&lt;span style=&quot; font-size:13px; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>480</y>
+     <width>211</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/* 按钮通用样式 */
+                    QPushButton {
+                    background-color: #5E81AC;
+                    color: white;
+                    border: none;
+                    padding: 8px 15px;
+                    border-radius: 4px;
+                    min-width: 70px;
+                    }
+
+                    QPushButton:hover {
+                    background-color: #81A1C1;
+                    }
+
+                    QPushButton:pressed {
+                    background-color: #4C6A8C;
+                    }
+                </string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>OnStartDialogWindow</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>OnStartDialogWindow</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
