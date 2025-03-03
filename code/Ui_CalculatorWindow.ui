@@ -25,6 +25,39 @@
         <property name="windowTitle">
             <string>精灵计算器</string>
         </property>
+        <property name="styleSheet">
+            <string notr="true">/* 按钮通用样式 */
+                QPushButton {
+                background-color: #5E81AC;
+                color: white;
+                border: none;
+                padding: 8px 15px;
+                border-radius: 4px;
+                min-width: 80px;
+                }
+
+                QPushButton:hover {
+                background-color: #81A1C1;
+                }
+
+                QPushButton:pressed {
+                background-color: #4C6A8C;
+                }
+
+                /* 输入框样式 */
+                QLineEdit {
+                border: 1px solid #D8DEE9;
+                padding: 5px;
+                border-radius: 3px;
+                }
+
+                /* 标签样式 */
+                QLabel {
+                color: #4A5665;
+                font-size: 13px;
+                }
+            </string>
+        </property>
         <widget class="QWidget" name="centralwidget">
             <widget class="QPushButton" name="CalculateButton">
                 <property name="geometry">
@@ -50,7 +83,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -84,7 +117,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -148,7 +181,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -166,7 +199,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -184,7 +217,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -202,7 +235,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -220,7 +253,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -238,7 +271,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -256,7 +289,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -274,7 +307,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -468,7 +501,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -506,7 +539,11 @@
                     </font>
                 </property>
                 <property name="styleSheet">
-                    <string notr="true"/>
+                    <string notr="true">/* 基础字体调整 */
+                        QComboBox {
+                        border: 1px solid #D8DEE9;
+                        }
+                    </string>
                 </property>
                 <property name="maxVisibleItems">
                     <number>15</number>
@@ -728,7 +765,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -746,7 +783,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
@@ -860,7 +897,7 @@
                 </property>
                 <property name="font">
                     <font>
-                        <pointsize>12</pointsize>
+                        <pointsize>-1</pointsize>
                     </font>
                 </property>
                 <property name="text">
