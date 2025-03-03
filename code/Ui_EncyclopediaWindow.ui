@@ -35,6 +35,15 @@
                         <height>41</height>
                     </rect>
                 </property>
+                <property name="styleSheet">
+                    <string notr="true">/* 输入框样式 */
+                        QLineEdit {
+                        border: 1px solid #D8DEE9;
+                        padding: 5px;
+                        border-radius: 3px;
+                        }
+                    </string>
+                </property>
                 <property name="placeholderText">
                     <string>输入精灵名称/序号进行搜索</string>
                 </property>
@@ -140,6 +149,26 @@
                         <width>201</width>
                         <height>41</height>
                     </rect>
+                </property>
+                <property name="styleSheet">
+                    <string notr="true">/* 按钮通用样式 */
+                        QPushButton {
+                        background-color: #5E81AC;
+                        color: white;
+                        border: none;
+                        padding: 8px 15px;
+                        border-radius: 4px;
+                        min-width: 80px;
+                        }
+
+                        QPushButton:hover {
+                        background-color: #81A1C1;
+                        }
+
+                        QPushButton:pressed {
+                        background-color: #4C6A8C;
+                        }
+                    </string>
                 </property>
                 <property name="text">
                     <string>进入计算器</string>
