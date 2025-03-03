@@ -1,64 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>LoadScriptDialogWindow</class>
-    <widget class="QDialog" name="LoadScriptDialogWindow">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>400</width>
-                <height>150</height>
-            </rect>
-        </property>
-        <property name="windowTitle">
-            <string>加载自定义脚本</string>
-        </property>
-        <widget class="QLabel" name="filePathLabel">
-            <property name="geometry">
-                <rect>
-                    <x>20</x>
-                    <y>9</y>
-                    <width>361</width>
-                    <height>41</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>未选择文件</string>
-            </property>
-            <property name="alignment">
-                <set>Qt::AlignCenter</set>
-            </property>
-        </widget>
-        <widget class="QPushButton" name="selectFileButton">
-            <property name="geometry">
-                <rect>
-                    <x>150</x>
-                    <y>60</y>
-                    <width>91</width>
-                    <height>31</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>选择脚本文件</string>
-            </property>
-        </widget>
-        <widget class="QDialogButtonBox" name="buttonBox">
-            <property name="geometry">
-                <rect>
-                    <x>110</x>
-                    <y>100</y>
-                    <width>161</width>
-                    <height>41</height>
-                </rect>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="standardButtons">
-                <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-            </property>
-        </widget>
-    </widget>
-    <resources/>
-    <connections/>
+ <class>LoadScriptDialogWindow</class>
+ <widget class="QDialog" name="LoadScriptDialogWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>150</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>加载自定义脚本</string>
+  </property>
+  <widget class="QLabel" name="filePathLabel">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>9</y>
+     <width>361</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>未选择文件</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="selectFileButton">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>60</y>
+     <width>110</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">            /* 按钮通用样式 */
+            QPushButton {
+                background-color: #5E81AC;
+                color: white;
+                border: none;
+                padding: 8px 15px;
+                border-radius: 4px;
+                min-width: 80px;
+            }
+
+            QPushButton:hover {
+                background-color: #81A1C1;
+            }
+
+            QPushButton:pressed {
+                background-color: #4C6A8C;
+        }
+    </string>
+   </property>
+   <property name="text">
+    <string>选择脚本文件</string>
+   </property>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>100</y>
+     <width>171</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">            /* 按钮通用样式 */
+            QPushButton {
+                background-color: #5E81AC;
+                color: white;
+                border: none;
+                padding: 8px 15px;
+                border-radius: 4px;
+                min-width: 50px;
+            }
+
+            QPushButton:hover {
+                background-color: #81A1C1;
+            }
+
+            QPushButton:pressed {
+                background-color: #4C6A8C;
+            }</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
 </ui>

@@ -20,10 +20,44 @@ class Ui_LoadScriptDialogWindow(object):
         self.filePathLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.filePathLabel.setObjectName("filePathLabel")
         self.selectFileButton = QtWidgets.QPushButton(LoadScriptDialogWindow)
-        self.selectFileButton.setGeometry(QtCore.QRect(150, 60, 91, 31))
+        self.selectFileButton.setGeometry(QtCore.QRect(140, 60, 110, 31))
+        self.selectFileButton.setStyleSheet("            /* 按钮通用样式 */\n"
+"            QPushButton {\n"
+"                background-color: #5E81AC;\n"
+"                color: white;\n"
+"                border: none;\n"
+"                padding: 8px 15px;\n"
+"                border-radius: 4px;\n"
+"                min-width: 80px;\n"
+"            }\n"
+"\n"
+"            QPushButton:hover {\n"
+"                background-color: #81A1C1;\n"
+"            }\n"
+"\n"
+"            QPushButton:pressed {\n"
+"                background-color: #4C6A8C;\n"
+"            }")
         self.selectFileButton.setObjectName("selectFileButton")
         self.buttonBox = QtWidgets.QDialogButtonBox(LoadScriptDialogWindow)
-        self.buttonBox.setGeometry(QtCore.QRect(110, 100, 161, 41))
+        self.buttonBox.setGeometry(QtCore.QRect(110, 100, 171, 41))
+        self.buttonBox.setStyleSheet("            /* 按钮通用样式 */\n"
+"            QPushButton {\n"
+"                background-color: #5E81AC;\n"
+"                color: white;\n"
+"                border: none;\n"
+"                padding: 8px 15px;\n"
+"                border-radius: 4px;\n"
+"                min-width: 50px;\n"
+"            }\n"
+"\n"
+"            QPushButton:hover {\n"
+"                background-color: #81A1C1;\n"
+"            }\n"
+"\n"
+"            QPushButton:pressed {\n"
+"                background-color: #4C6A8C;\n"
+"            }")
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
