@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>ConfirmExitDialog</class>
-    <widget class="QDialog" name="ConfirmExitDialog">
+    <class>ConfirmExitDialogWindow</class>
+    <widget class="QDialog" name="ConfirmExitDialogWindow">
         <property name="geometry">
             <rect>
                 <x>0</x>
@@ -34,6 +34,26 @@
                     <width>161</width>
                     <height>41</height>
                 </rect>
+            </property>
+            <property name="styleSheet">
+                <string notr="true">/* 按钮通用样式 */
+                    QPushButton {
+                    background-color: #5E81AC;
+                    color: white;
+                    border: none;
+                    padding: 8px 15px;
+                    border-radius: 4px;
+                    min-width: 40px;
+                    }
+
+                    QPushButton:hover {
+                    background-color: #81A1C1;
+                    }
+
+                    QPushButton:pressed {
+                    background-color: #4C6A8C;
+                    }
+                </string>
             </property>
             <property name="orientation">
                 <enum>Qt::Horizontal</enum>

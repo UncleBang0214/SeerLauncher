@@ -12,28 +12,39 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_ConfirmExitDialogWindow(object):
-    def setupUi(self, ConfirmExitDialog):
-        ConfirmExitDialog.setObjectName("ConfirmExitDialog")
-        ConfirmExitDialog.resize(282, 124)
-        self.label = QtWidgets.QLabel(ConfirmExitDialog)
+    def setupUi(self, ConfirmExitDialogWindow):
+        ConfirmExitDialogWindow.setObjectName("ConfirmExitDialogWindow")
+        ConfirmExitDialogWindow.resize(282, 124)
+        self.label = QtWidgets.QLabel(ConfirmExitDialogWindow)
         self.label.setGeometry(QtCore.QRect(30, 35, 221, 20))
         self.label.setObjectName("label")
-        self.buttonBox = QtWidgets.QDialogButtonBox(ConfirmExitDialog)
+        self.buttonBox = QtWidgets.QDialogButtonBox(ConfirmExitDialogWindow)
         self.buttonBox.setGeometry(QtCore.QRect(50, 70, 161, 41))
+        self.buttonBox.setStyleSheet("            /* 按钮通用样式 */\n"
+"            QPushButton {\n"
+"                background-color: #5E81AC;\n"
+"                color: white;\n"
+"                border: none;\n"
+"                padding: 8px 15px;\n"
+"                border-radius: 4px;\n"
+"                min-width: 40px;\n"
+"            }\n"
+"\n"
+"            QPushButton:hover {\n"
+"                background-color: #81A1C1;\n"
+"            }\n"
+"\n"
+"            QPushButton:pressed {\n"
+"                background-color: #4C6A8C;\n"
+"            }")
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
 
-        self.retranslateUi(ConfirmExitDialog)
-        QtCore.QMetaObject.connectSlotsByName(ConfirmExitDialog)
+        self.retranslateUi(ConfirmExitDialogWindow)
+        QtCore.QMetaObject.connectSlotsByName(ConfirmExitDialogWindow)
 
-    def retranslateUi(self, ConfirmExitDialog):
+    def retranslateUi(self, ConfirmExitDialogWindow):
         _translate = QtCore.QCoreApplication.translate
-        ConfirmExitDialog.setWindowTitle(_translate("ConfirmExitDialog", "确认退出"))
-        self.label.setText(_translate("ConfirmExitDialog", "脚本运行中，确定要中止并退出程序吗？"))
-
-        # 设置按钮文本为中文
-        ok_button = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
-        cancel_button = self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel)
-        ok_button.setText(_translate("LoadScriptDialogWindow", "确定"))
-        cancel_button.setText(_translate("LoadScriptDialogWindow", "取消"))
+        ConfirmExitDialogWindow.setWindowTitle(_translate("ConfirmExitDialogWindow", "确认退出"))
+        self.label.setText(_translate("ConfirmExitDialogWindow", "脚本运行中，确定要中止并退出程序吗？"))
