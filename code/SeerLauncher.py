@@ -105,8 +105,8 @@ class LoginService:
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
-            "Origin": "http://144.48.8.4:88",
-            "Referer": "http://144.48.8.4:88/",
+            "Origin": "http://http://seer.xin/",
+            "Referer": "http://http://seer.xin/",
             "Content-Type": "application/json;charset=UTF-8"
         })
 
@@ -253,7 +253,7 @@ class LoginDialog(QDialog, Ui_LoginWindow):
     def _validate_input(self, email: str, password: str) -> bool:
         """输入验证"""
         if not email or not password:
-            QMessageBox.warning(self, "输入错误", "邮箱和密码不能为空")
+            QMessageBox.warning(self, "输入错误", "邮箱或密码不能为空")
             return False
 
         if "@" not in email or "." not in email.split("@")[-1]:
@@ -720,9 +720,10 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.ReFresh.triggered.connect(self.refresh_page)
         # 菜单
         self.SpeedChange.triggered.connect(self.open_speed_dialog)
+        # self.SpeedChange.setEnabled(False) # 后续可能要关闭变速功能
         self.SoundOff.triggered.connect(self.set_sound_off)
         self.StayTop.triggered.connect(self.stay_on_top)
-        self.ClearCache.triggered.connect(self.clear_cache)
+        self.CleanCache.triggered.connect(self.clear_cache)
         # 功能
         self.Encyclopedia.triggered.connect(self.open_encyclopedia)
         self.Calculator.triggered.connect(self.open_calculator)
