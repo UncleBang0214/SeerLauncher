@@ -10,8 +10,20 @@
     <height>535</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>720</width>
+    <height>535</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>720</width>
+    <height>535</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>用户协议与免责声明</string>
+   <string>用户服务协议</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QDialog {
@@ -23,9 +35,9 @@
   <widget class="QLabel" name="label_title">
    <property name="geometry">
     <rect>
-     <x>250</x>
+     <x>228</x>
      <y>10</y>
-     <width>209</width>
+     <width>251</width>
      <height>42</height>
     </rect>
    </property>
@@ -39,7 +51,7 @@
                 </string>
    </property>
    <property name="text">
-    <string>《用户协议与免责声明》</string>
+    <string>《用户服务协议》</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -80,7 +92,7 @@
       <x>0</x>
       <y>0</y>
       <width>662</width>
-      <height>1191</height>
+      <height>1758</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -102,40 +114,150 @@
        </property>
        <property name="text">
         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'SimSun'; font-size:13px; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;⚠重要警示：本软件为完全免费工具，通过任何付费途径获得均为上当受骗！&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
-&lt;h3 style=&quot; margin-top:20px; margin-bottom:15px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;重要提示&lt;/span&gt;&lt;span style=&quot; font-size:large; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h3&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;1. 本软件为《赛尔号》游戏爱好者开发的第三方工具&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
-&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;一、软件性质&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#e74c3c;&quot;&gt;※ 本软件仅供学习交流使用，禁止用于商业用途 ※&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#e74c3c;&quot;&gt;1.1本软件遵循MIT开源协议，禁止用于商业用途及任何非法场景&lt;/span&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#e74c3c;&quot;&gt;1.2用户使用本软件需遵守《网络安全法》及相关法律法规&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
-&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;二、用户责任&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;2.1 使用者承诺：&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;不用于任何违反《计算机软件保护条例》的行为                                    &lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                                                        &lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;不将该软件用于商业运营、游戏代练等营利行为&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;在游戏允许范围内进行脚本操作                                    &lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                                                        &lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;
-&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;三、数据安全&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;3.1本地存储的账号信息（login.json）为明文存储&lt;br /&gt;3.2 建议采取以下安全措施：&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                                                        &lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;定期修改游戏密码&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;不在公共设备保存登录信息&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;使用系统级加密工具保护配置文件&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;
-&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;四、第三方组件&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;4.1集成的大漠插件(dm.dll)需遵守其官方授权条款&lt;br /&gt;4.2 开发者不承担因插件导致的：&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                                                        &lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;游戏客户端异常&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;系统兼容性问题&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;反作弊机制触发的风险&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;
-&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;五、免责条款&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;出现以下情况时开发者不承担责任：&lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;因软件漏洞导致的游戏数据异常&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;未及时更新导致的版本不兼容&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;用户自行修改代码引发的故障&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;网络延迟或中断导致的登录失败&lt;/span&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;
-&lt;h4 style=&quot; margin-top:15px; margin-bottom:10px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#2c3e50;&quot;&gt;六、法律管辖&lt;/span&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;                                     &lt;/span&gt;&lt;/h4&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt;&quot;&gt;6.1 本协议适用中华人民共和国法律&lt;br /&gt;6.2 争议应优先通过友好协商解决&lt;br /&gt;6.3 协商不成时应向开发者所在地法院提起诉讼                                    &lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                     &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:30px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600;&quot;&gt;【再次提醒】本软件不会通过任何渠道收费，谨防受骗！&lt;/span&gt;&lt;span style=&quot; font-size:13px; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                    &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:30px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Microsoft YaHei'; font-size:13pt; font-weight:600; color:#e74c3c;&quot;&gt;【最终确认】继续使用即视为已阅读并同意上述所有条款&lt;/span&gt;&lt;span style=&quot; font-size:13px; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:13px;&quot;&gt;                                &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;style type=&quot;text/css&quot;&gt;
+body {
+    font-family: 'Microsoft YaHei', 'SimSun';
+    line-height: 1.8;
+    color: #2c3e50;
+    margin: 2rem;
+}
+
+.warning-block {
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 4px;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+    margin: 2rem 0 1.5rem;
+}
+
+.subsection-title {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin: 1.8rem 0 1.2rem;
+}
+
+.article-content {
+    margin: 1rem 0;
+    text-indent: 2em;
+}
+
+ul {
+    margin: 1rem 0;
+    padding-left: 2.5rem;
+}
+
+li {
+    margin: 0.8rem 0;
+    list-style-type: square;
+}
+
+.red-alert {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.code-block {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    margin: 1rem 0;
+}
+
+.final-notice {
+    text-align: center;
+    font-size: 1.2rem;
+    margin: 3rem 0;
+    padding: 2rem;
+    background: #e9ecef;
+    border-radius: 8px;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;warning-block&quot;&gt;
+    &lt;p class=&quot;red-alert&quot;&gt;⚠ 重要警示：本软件为完全免费工具，通过任何付费途径获得均为上当受骗！&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;h1 class=&quot;section-title&quot;&gt;用户服务协议&lt;/h1&gt;
+
+&lt;h2 class=&quot;subsection-title&quot;&gt;重要提示&lt;/h2&gt;
+&lt;p class=&quot;article-content&quot;&gt;本协议是用户（下称&quot;您&quot;或&quot;用户&quot;）与茶杯登录器之间的法律协议，茶杯登录器将按照本协议约定为您提供服务。&quot;茶杯登录器&quot;指茶杯登录器及其相关服务、制作团队或个人。&lt;/p&gt;
+
+&lt;h2 class=&quot;subsection-title&quot;&gt;一、软件性质&lt;/h2&gt;
+&lt;div class=&quot;warning-block&quot;&gt;
+    &lt;p class=&quot;red-alert&quot;&gt;※ 本软件仅供学习交流使用，禁止用于商业用途 ※&lt;/p&gt;
+&lt;/div&gt;
+&lt;p class=&quot;article-content&quot;&gt;1.1 茶杯登录器是针对游戏《赛尔号》的辅助工具，提供日常登录、游戏优化、数据计算等功能，非作弊外挂。&lt;/p&gt;
+&lt;p class=&quot;article-content&quot;&gt;1.2 本软件为免费开源项目，属玩家自发制作的公益工具，开发目的为提升游戏体验，不收取任何费用。&lt;/p&gt;
+
+&lt;h2 class=&quot;subsection-title&quot;&gt;二、版权声明&lt;/h2&gt;
+&lt;p class=&quot;article-content&quot;&gt;2.1 软件源代码著作权归作者所有（图标素材除外）&lt;/p&gt;
+&lt;p class=&quot;article-content&quot;&gt;2.2 游戏主体及素材版权归属上海淘米网络科技有限公司&lt;/p&gt;
+
+&lt;h2 class=&quot;subsection-title&quot;&gt;三、服务条款&lt;/h2&gt;
+&lt;p class=&quot;article-content&quot;&gt;3.1 服务范围包括：&lt;/p&gt;
+&lt;ul&gt;
+    &lt;li&gt;茶杯登录器主体程序&lt;/li&gt;
+    &lt;li&gt;精灵大全/计算器等扩展功能&lt;/li&gt;
+    &lt;li&gt;游戏攻略与科普内容&lt;/li&gt;
+    &lt;li&gt;多终端适配版本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p class=&quot;article-content&quot;&gt;3.2 禁止通过非法手段分离软件功能&lt;/p&gt;
+&lt;p class=&quot;article-content&quot;&gt;3.3 仅限官方指定渠道下载使用&lt;/p&gt;
+
+&lt;h2 class=&quot;subsection-title&quot;&gt;四、用户责任&lt;/h2&gt;
+&lt;p class=&quot;article-content&quot;&gt;4.1 需遵守以下法律法规：&lt;/p&gt;
+&lt;ul&gt;
+    &lt;li&gt;《中华人民共和国网络安全法》&lt;/li&gt;
+    &lt;li&gt;《计算机软件保护条例》&lt;/li&gt;
+    &lt;li&gt;《信息网络传播权保护条例》&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p class=&quot;article-content&quot;&gt;4.2 禁止行为包括：&lt;/p&gt;
+&lt;ul&gt;
+    &lt;li&gt;利用软件进行游戏作弊&lt;/li&gt;
+    &lt;li&gt;商业性使用或二次销售&lt;/li&gt;
+    &lt;li&gt;反向工程或恶意修改&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 class=&quot;subsection-title&quot;&gt;五、数据安全&lt;/h2&gt;
+&lt;p class=&quot;article-content&quot;&gt;5.1 本地存储采用明文记录账号（不含密码）&lt;/p&gt;
+&lt;p class=&quot;article-content&quot;&gt;5.2 建议安全措施：&lt;/p&gt;
+&lt;ul&gt;
+    &lt;li&gt;定期修改游戏密码&lt;/li&gt;
+    &lt;li&gt;避免公共设备保存信息&lt;/li&gt;
+    &lt;li&gt;使用系统加密工具&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 class=&quot;subsection-title&quot;&gt;六、免责声明&lt;/h2&gt;
+&lt;p class=&quot;article-content&quot;&gt;6.1 不承担责任的情形：&lt;/p&gt;
+&lt;ul&gt;
+    &lt;li&gt;软件漏洞导致的数据异常&lt;/li&gt;
+    &lt;li&gt;版本不兼容问题&lt;/li&gt;
+    &lt;li&gt;用户自行修改引发的故障&lt;/li&gt;
+    &lt;li&gt;网络问题导致的登录失败&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;final-notice&quot;&gt;
+    &lt;p class=&quot;red-alert&quot;&gt;【重要提示】本软件完全免费，谨防诈骗！&lt;/p&gt;
+    &lt;p class=&quot;red-alert&quot;&gt;【使用确认】继续操作即视为接受全部条款&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignTop</set>
