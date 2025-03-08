@@ -1045,7 +1045,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
                 # 图像识别逻辑
                 if use_image_recognition and target_image:
-                    found = dm.FindPic(0, 0, 4000, 4000, resource_path(f"img/{target_image}"), "000000", 0.9, 0)
+                    found = dm.FindPic(0, 0, 4000, 4000, resource_path(target_image), "000000", 0.9, 0)
                     if found[1] == -1 and found[2] == -1:
                         print(f"任务 [{current_task_name}] 超时未找到图片 {target_image}，跳过此任务")
                         current_task_name = next_task_name
@@ -1085,8 +1085,6 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                     else:
                         print(
                             f"[额外操作] 当前循环计数 {loop_count} 不满足触发条件 (触发间隔 {trigger_interval})，跳过额外操作")
-                else:
-                    print(f"[额外操作] 当前任务 [{current_task_name}] 未配置额外操作，跳过")
 
                 # 跳转到下一个任务
                 current_task_name = next_task_name
@@ -1121,7 +1119,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
             # 图像识别逻辑
             if use_image_recognition and target_image:
-                found = dm.FindPic(0, 0, 4000, 4000, resource_path(f"img/{target_image}"), "000000", 0.9, 0)
+                found = dm.FindPic(0, 0, 4000, 4000, resource_path(target_image), "000000", 0.9, 0)
                 if found[1] == -1 and found[2] == -1:
                     print(f"[额外操作 第{step_index + 1}步] 未找到图片 {target_image}，跳过点击")
                 else:
