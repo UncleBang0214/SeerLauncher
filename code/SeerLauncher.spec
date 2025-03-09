@@ -8,8 +8,8 @@ a = Analysis(
     ['SeerLauncher.py'],
     pathex=['.'],
     binaries=[
-        ('SpeedControl.dll', '.'),
-        ('ini\\dm.dll', '.'),
+        ('ini\\s.dll', 'ini'),
+        ('ini\\d.dll', 'ini'),
         *collect_dynamic_libs('cryptography')
     ],
     datas=[
@@ -75,15 +75,4 @@ exe = EXE(
         '</compatibility>',
         '</assembly>'
     ])
-)
-
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='茶杯登录器',
 )
