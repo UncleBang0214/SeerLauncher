@@ -13,6 +13,8 @@ pyrcc5 -o login_logo_rc.py img/login_logo.qrc
 
 2.打包
 pyinstaller SeerLauncher.spec
+如需缩小体积可以采用，但是会影响自制dll的读取
+pyinstaller --upx-dir="C:\Program Files\upx-3.96-win64" SeerLauncher.spec
 
 
 
@@ -50,8 +52,9 @@ v0.9.9.20250228_Beta
 新增本地账号存储（不包含密码）、登录器信息
 
 v1.0.0.20250303_Release
-新增清理缓存功能、UI美化、免责条款
+新增清理缓存功能、UI美化、用户协议
+
+v1.1.0.20250309_Release
+修复识图任务逻辑、登录时默认选取最新登录的账号、优化登录器依赖、精灵大全扩展至1000序号、修复计算器取整逻辑
 
 
-待实现的功能：
-1.本地皮肤
