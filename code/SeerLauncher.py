@@ -47,7 +47,7 @@ def initialize_dm():
     """初始化大漠插件并注册为全局变量"""
     global dm
     try:
-        dll_path = resource_path('ini/dm.dll')
+        dll_path = resource_path('ini/d.dll')
         if not os.path.exists(dll_path):
             print(f"未找到dll: {dll_path}")
             return False
@@ -71,7 +71,7 @@ def unregister_dm():
     if dm is not None:
         print("正在注销大漠插件")
         try:
-            dll_path = resource_path('ini/dm.dll')
+            dll_path = resource_path('ini/d.dll')
             if os.path.exists(dll_path):
                 result = os.system(f"regsvr32 /u /s {dll_path}")
                 if result == 0:
@@ -87,6 +87,7 @@ def unregister_dm():
 
 
 class OnStartDialog(QtWidgets.QDialog, Ui_OnStartDialogWindow):
+    """用户协议"""
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -98,6 +99,7 @@ class OnStartDialog(QtWidgets.QDialog, Ui_OnStartDialogWindow):
 
 
 class LoginService:
+    """登录逻辑"""
     LOGIN_URL = "http://m9.ctymc.cn:20672/seer/customer/login"
     GAME_URL_TEMPLATE = "http://b2.sjcmc.cn:16484/?sid={session}"
 
@@ -189,12 +191,20 @@ class LoginDialog(QDialog, Ui_LoginWindow):
         self.setWindowIcon(self.windowIcon())
 
     def load_history(self):
-        """加载历史账号"""
+        """加载历史账号并设置默认选中最后一次登录的账号"""
         try:
             if os.path.exists(self.history_file):
                 with open(self.history_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
-                    self.accountEdit.addItems(data.get("history_accounts", []))
+                    history_accounts = data.get("history_accounts", [])
+
+                    # 添加历史记录到下拉框
+                    self.accountEdit.addItems(history_accounts)
+
+                    # 设置默认选中最后一次登录的账号（列表第一个元素）
+                    if history_accounts:
+                        self.accountEdit.setCurrentIndex(0)  # 选中最新账号
+                        self.accountEdit.lineEdit().setSelection(0, len(history_accounts[0]))  # 全选文本方便直接输入
         except Exception as e:
             QMessageBox.warning(self, "警告", f"历史记录加载失败: {str(e)}")
 
@@ -278,7 +288,10 @@ class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
     def __init__(self, parent=None):
         super(SpeedControlDialog, self).__init__(parent)
         self.setupUi(self)
-        self.lib = CDLL(r"SpeedControl.dll")
+
+        dll_path = resource_path('ini/s.dll')
+        self.lib = CDLL(dll_path)
+
         self.horizontalSlider.setMinimum(1)
         self.horizontalSlider.setMaximum(10)
         self.horizontalSlider.setSingleStep(1)
@@ -293,6 +306,7 @@ class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
     def change_speed(self):
         try:
             value = float(self.textEdit_speed.text())
+            # 防呆处理
             if value < 1:
                 value = 1
             self.lib.SetRange(c_float(value))
@@ -449,7 +463,7 @@ class EncyclopediaWindow(QtWidgets.QMainWindow):
 
 
 class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
-    """精灵计算器（完整功能版）"""
+    """精灵计算器"""
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -545,12 +559,20 @@ class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
             # 计算各项能力值
             results = {}
             for stat in ["体力", "攻击", "特攻", "防御", "特防", "速度"]:
-                base = (race_values[stat] * 2 + iv + int(self._get_effort(stat)) // 4) * level // 100
+                effort = int(self._get_effort(stat))
+
+                # 核心公式（保留所有小数直到最终取整）
+                effort_contribution = effort / 4.0  # 学习力/4保留小数
+                base_value = (race_values[stat] * 2 + iv + effort_contribution) * level / 100.0
 
                 if stat == "体力":
-                    results[stat] = base + 10 + level
+                    final = int(base_value) + 10 + level
                 else:
-                    results[stat] = int((base + 5) * modifiers[stat])
+                    # 基础值+5后应用性格修正再取整
+                    adjusted = (base_value + 5) * modifiers[stat]
+                    final = int(adjusted)  # 舍弃小数
+
+                results[stat] = final
 
             # 更新界面
             self.HPLabel.setText(str(results["体力"]))
