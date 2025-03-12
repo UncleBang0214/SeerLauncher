@@ -1,4 +1,7 @@
+import ctypes
+
 import requests
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings, QWebEngineProfile
 from pynput.keyboard import Listener, Key
 import threading
 import time
@@ -10,7 +13,7 @@ from ctypes import CDLL, c_float
 from pycaw.utils import AudioUtilities
 from win32com.client import Dispatch
 from PyQt5 import QAxContainer, QtWidgets, QtCore
-from PyQt5.QtCore import QRect, pyqtSignal, Qt, QEvent
+from PyQt5.QtCore import QRect, pyqtSignal, Qt, QEvent, QUrl, QTimer
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDialog, QMessageBox, QFileDialog, QComboBox, QVBoxLayout, \
     QScrollArea, QWidget, QLabel, QDialogButtonBox, QGraphicsDropShadowEffect
 from PyQt5.QtGui import QIcon, QColor
@@ -25,6 +28,7 @@ from Ui_EncyclopediaWindow import Ui_EncyclopediaWindow
 
 # 全局变量定义
 launcher_name = "茶杯登录器"  # 登录器名称
+global_is_muted = False  # 静音状态
 global_is_stay_on_top = False  # 窗口置顶状态标志
 dm = None  # 大漠插件对象
 global_is_scripts_enabled = False  # 脚本功能是否启用
@@ -88,6 +92,7 @@ def unregister_dm():
 
 class OnStartDialog(QtWidgets.QDialog, Ui_OnStartDialogWindow):
     """用户协议"""
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -742,7 +747,6 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.ReFresh.triggered.connect(self.refresh_page)
         # 菜单
         self.SpeedChange.triggered.connect(self.open_speed_dialog)
-        # self.SpeedChange.setEnabled(False) # 后续可能要关闭变速功能
         self.SoundOff.triggered.connect(self.set_sound_off)
         self.StayTop.triggered.connect(self.stay_on_top)
         self.CleanCache.triggered.connect(self.clear_cache)
@@ -764,15 +768,32 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.About.triggered.connect(self.open_about)
         self.UpdateLog.triggered.connect(self.open_updatelog)
 
+    """
+    # 初始化浏览器组件
     def init_components(self):
-        """初始化浏览器组件"""
         self.axWidget = QAxContainer.QAxWidget(self.centralwidget)
-        self.axWidget.setGeometry(QRect(-25, -20, 1024, 700))
+        # 初始尺寸设为窗口客户区大小
+        self.axWidget.setGeometry(QRect(0, 0, self.width(), self.height()))
+        # 设置Flash控件的ClassID
         self.axWidget.setControl("{8856F961-340A-11D0-A96B-00C04FD705A2}")
+        # 登录游戏
         self.navigate_to_game()
 
-    # 登录
+    # 加载游戏页面并配置缩放
     def navigate_to_game(self):
+        # 设置缩放模式为 ShowAll（保持宽高比填充）
+        self.axWidget.dynamicCall(
+            "SetProperty(const QString&, const QVariant&)",
+            "ScaleMode",
+            "ShowAll"  # 可选值：NoScale | ExactFit | ShowAll
+        )
+
+        # 禁用右键菜单
+        self.axWidget.dynamicCall(
+            "SetProperty(const QString&, const QVariant&)",
+            "Menu",
+            False
+        )
         game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
         print("加载:", game_url)
         self.axWidget.dynamicCall("Navigate(const QString&)", game_url)
@@ -782,6 +803,69 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
         print("刷新:", game_url)
         self.axWidget.dynamicCall("Navigate(const QString&)", game_url)
+    """
+
+    # 初始化浏览器组件
+    def init_components(self):
+        # 创建浏览器组件
+        self.browser = QWebEngineView()
+
+        # 创建容器并设置为中心部件
+        container = QWidget()
+        self.setCentralWidget(container)
+
+        # 设置浏览器在容器中的位置和尺寸
+        self.browser.setParent(container)
+        self.browser.setGeometry(QRect(-32, -16, 1024, 960))
+
+        self.configure_flash()
+        game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
+        print("加载：", game_url)
+        self.browser.load(QUrl(game_url))
+        QTimer.singleShot(3000, self.check_flash_status)
+
+    # 刷新
+    def refresh_page(self):
+        game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
+        print("刷新:", game_url)
+        self.browser.load(QUrl(game_url))
+
+    def configure_flash(self):
+        """配置Flash插件参数"""
+        flash_path = r"C:\Windows\SysWOW64\Macromed\Flash\pepflashplayer.dll"
+        chrome_args = [
+            f"--ppapi-flash-path={flash_path}",
+            "--ppapi-flash-version=34.0.0.277",
+            "--disable-features=EnableEphemeralFlashPermission"  # 禁用临时权限
+        ]
+        os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = " ".join(chrome_args)
+
+        # 强制启用插件
+        settings = self.browser.settings()
+        settings.setAttribute(QWebEngineSettings.PluginsEnabled, True)
+        settings.setAttribute(QWebEngineSettings.JavascriptEnabled, True)
+
+    def check_flash_status(self):
+        """检查Flash是否加载成功"""
+        js_code = """
+        (function() {
+            try {
+                return document.getElementsByTagName('embed')[0].type === 'application/x-shockwave-flash';
+            } catch(e) {
+                return false;
+            }
+        })();
+        """
+        self.browser.page().runJavaScript(js_code, self.handle_flash_check)
+
+    def handle_flash_check(self, result):
+        """处理检测结果"""
+        if result:
+            print("✅ Flash内容已成功加载")
+        else:
+            print("❌ Flash加载失败，请检查：")
+            print("1. Flash插件路径是否正确")
+            print("2. 网站是否要求手动允许Flash")
 
     # 变速输入框
     def open_speed_dialog(self):
@@ -791,19 +875,15 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
     # 静音
     def set_sound_off(self):
-        global launcher_name
-        sessions = AudioUtilities.GetAllSessions()
-        for session in sessions:
-            if session.Process and session.Process.name() == f"{launcher_name}.exe":
-                volume_interface = session.SimpleAudioVolume
-                current_mute = volume_interface.GetMute()
-                if current_mute:
-                    volume_interface.SetMute(0, None)
-                    self.SoundOff.setText("静音")
-                else:
-                    volume_interface.SetMute(1, None)
-                    self.SoundOff.setText("√静音")
-                break
+        global global_is_muted
+        if global_is_muted:
+            self.browser.page().setAudioMuted(False)
+            self.SoundOff.setText("静音")
+            global_is_muted = False
+        else:
+            self.browser.page().setAudioMuted(True)
+            self.SoundOff.setText("√静音")
+            global_is_muted = True
 
     # 窗口置顶
     def stay_on_top(self):
@@ -818,56 +898,47 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             global_is_stay_on_top = True
         self.show()
 
-    # 清理IE浏览器缓存
+    # 清理浏览器缓存
     def clear_cache(self):
+        """清理浏览器缓存"""
         try:
-            # 使用系统命令清理IE缓存（需要管理员权限）
-            # 255对应所有缓存类型：历史记录、Cookies、临时文件、表单数据、密码等
-            command = 'RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 255'
+            profile = QWebEngineProfile.defaultProfile()
 
-            # 执行清理命令
-            result = os.system(command)
+            # 清除HTTP缓存
+            profile.clearHttpCache()
 
-            # 检查执行结果
-            if result == 0:
-                QMessageBox.information(
-                    self,
-                    "清理成功",
-                    "IE浏览器缓存已清理！\n\n注意：部分系统可能需要管理员权限才能完全清除",
-                    QMessageBox.Ok
-                )
-            else:
-                QMessageBox.warning(
-                    self,
-                    "清理失败",
-                    "缓存清理未完全成功，请尝试：\n1. 以管理员身份运行登录器\n2. 手动清理浏览器缓存",
-                    QMessageBox.Ok
-                )
+            # 清除Cookies
+            cookie_store = profile.cookieStore()
+            cookie_store.deleteAllCookies()
 
-            # 附加清理：删除Temporary Internet Files目录内容
-            temp_path = os.path.join(
-                os.environ['USERPROFILE'],
-                'AppData\\Local\\Microsoft\\Windows\\INetCache\\IE'
+            # 清除本地存储
+            profile.clearAllVisitedLinks()
+            profile.setPersistentStoragePath("")  # 禁用持久存储
+
+            # 使用JavaScript清理更多存储（可选）
+            js_clean = """
+            localStorage.clear();
+            sessionStorage.clear();
+            indexedDB.databases().then(dbs => {
+                for (let db of dbs) {
+                    indexedDB.deleteDatabase(db.name);
+                }
+            });
+            """
+            self.browser.page().runJavaScript(js_clean)
+
+            QMessageBox.information(
+                self,
+                "清理完成",
+                "浏览器缓存已清理完成！\n包括：\n- HTTP缓存\n- Cookies\n- 本地存储数据",
+                QMessageBox.Ok
             )
-            if os.path.exists(temp_path):
-                for root, dirs, files in os.walk(temp_path):
-                    for file in files:
-                        try:
-                            os.remove(os.path.join(root, file))
-                        except Exception as e:
-                            print(f"删除文件失败 {file}: {str(e)}")
-                    for dir in dirs:
-                        try:
-                            os.rmdir(os.path.join(root, dir))
-                        except Exception as e:
-                            print(f"删除目录失败 {dir}: {str(e)}")
-                print("已手动清理临时文件目录")
 
         except Exception as e:
             QMessageBox.critical(
                 self,
-                "发生错误",
-                f"清理过程中出现异常：{str(e)}",
+                "清理错误",
+                f"缓存清理失败：{str(e)}",
                 QMessageBox.Ok
             )
 
@@ -924,7 +995,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
     def open_about(self):
         about_content = """
         <h2>关于茶杯登录器</h2>
-        <p>版本：v1.0.0</p>
+        <p>版本：v1.1.2</p>
         <p>开发者：小茶杯</p>
         <p>描述：</p>
         <p>下班闲暇之余制作，开发该登录器旨在优化各位的游玩体验</p>
@@ -939,9 +1010,17 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
     def open_updatelog(self):
         update_content = """
         <h2>登录器更新日志</h2>
+        <h3>v1.1.2 (2025-03-12)</h3>
+        <ul>
+            <li>内核重构</li>
+        </ul>
+        <h3>v1.1.1 (2025-03-09)</h3>
+        <ul>
+            <li>修复识图任务逻辑、登录时默认选取最新登录的账号、优化登录器依赖、精灵大全扩展至1000序号、修复计算器取整逻辑</li>
+        </ul>
         <h3>v1.0.0 (2025-03-03)</h3>
         <ul>
-            <li>新增清理缓存功能、UI美化、免责条款</li>
+            <li>新增清理缓存功能、UI美化、用户协议</li>
         </ul>
         <h3>v0.9.9 (2025-02-28)</h3>
         <ul>
@@ -1221,9 +1300,19 @@ sys.excepthook = handle_uncaught_exception
 
 if __name__ == '__main__':
     """主函数"""
+    # Windows高DPI适配
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)  # 设置为Per-Monitor DPI Aware
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
+
     app = QApplication(sys.argv)
     app_icon_path = resource_path('img/logo.ico')
     app.setWindowIcon(QIcon(app_icon_path))
+
+    # 设置用户代理（模拟Chrome 87）
+    os.environ.setdefault("QTWEBENGINE_CHROMIUM_FLAGS", "")  # 初始化
+    os.environ[
+        "QTWEBENGINE_CHROMIUM_FLAGS"] += " --user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
 
     # 免责声明
     start_dialog = OnStartDialog()
