@@ -1,54 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="windowModality">
-   <enum>Qt::WindowModal</enum>
-  </property>
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>958</width>
-    <height>578</height>
-   </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>958</width>
-    <height>578</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>958</width>
-    <height>578</height>
-   </size>
-  </property>
-  <property name="font">
-   <font>
-    <family>新宋体</family>
-    <weight>50</weight>
-    <bold>false</bold>
-    <underline>false</underline>
-    <stylestrategy>PreferDefault</stylestrategy>
-   </font>
-  </property>
-  <property name="windowTitle">
-   <string>茶杯登录器</string>
-  </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>img/logo.png</normaloff>img/logo.png</iconset>
-  </property>
-  <property name="windowOpacity">
-   <double>5.000000000000000</double>
-  </property>
-  <property name="autoFillBackground">
-   <bool>false</bool>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">/* 按钮通用样式 */
+    <class>MainWindow</class>
+    <widget class="QMainWindow" name="MainWindow">
+        <property name="windowModality">
+            <enum>Qt::WindowModal</enum>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>958</width>
+                <height>585</height>
+            </rect>
+        </property>
+        <property name="minimumSize">
+            <size>
+                <width>958</width>
+                <height>585</height>
+            </size>
+        </property>
+        <property name="maximumSize">
+            <size>
+                <width>958</width>
+                <height>585</height>
+            </size>
+        </property>
+        <property name="font">
+            <font>
+                <family>新宋体</family>
+                <weight>50</weight>
+                <bold>false</bold>
+                <underline>false</underline>
+                <stylestrategy>PreferDefault</stylestrategy>
+            </font>
+        </property>
+        <property name="windowTitle">
+            <string>茶杯登录器</string>
+        </property>
+        <property name="windowIcon">
+            <iconset>
+                <normaloff>img/logo.png</normaloff>img/logo.png
+            </iconset>
+        </property>
+        <property name="windowOpacity">
+            <double>5.000000000000000</double>
+        </property>
+        <property name="autoFillBackground">
+            <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+            <string notr="true">/* 按钮通用样式 */
                 QPushButton {
                 background-color: #5E81AC;
                 color: white;
@@ -78,173 +79,173 @@
                 font-size: 13px;
                 }
             </string>
-  </property>
-  <property name="iconSize">
-   <size>
-    <width>24</width>
-    <height>24</height>
-   </size>
-  </property>
-  <widget class="QWidget" name="centralwidget"/>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>958</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>菜单</string>
-    </property>
-    <addaction name="ReFresh"/>
-    <addaction name="SpeedChange"/>
-    <addaction name="SoundOff"/>
-    <addaction name="StayTop"/>
-    <addaction name="CleanCache"/>
-   </widget>
-   <widget class="QMenu" name="menu_2">
-    <property name="title">
-     <string>脚本</string>
-    </property>
-    <addaction name="EnableScripts"/>
-    <addaction name="LoadCustomScript"/>
-   </widget>
-   <widget class="QMenu" name="menu_3">
-    <property name="title">
-     <string>功能</string>
-    </property>
-    <addaction name="Encyclopedia"/>
-    <addaction name="Calculator"/>
-   </widget>
-   <widget class="QMenu" name="menu_4">
-    <property name="title">
-     <string>关于</string>
-    </property>
-    <addaction name="About"/>
-    <addaction name="UpdateLog"/>
-   </widget>
-   <addaction name="menu"/>
-   <addaction name="menu_3"/>
-   <addaction name="menu_2"/>
-   <addaction name="menu_4"/>
-  </widget>
-  <action name="ReFresh">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>刷新</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>新宋体</family>
-    </font>
-   </property>
-  </action>
-  <action name="SpeedChange">
-   <property name="text">
-    <string>变速</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>新宋体</family>
-    </font>
-   </property>
-  </action>
-  <action name="SoundOff">
-   <property name="text">
-    <string>静音</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>新宋体</family>
-    </font>
-   </property>
-  </action>
-  <action name="StayTop">
-   <property name="text">
-    <string>置顶</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>新宋体</family>
-    </font>
-   </property>
-  </action>
-  <action name="CleanCache">
-   <property name="text">
-    <string>清理缓存</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>新宋体</family>
-    </font>
-   </property>
-  </action>
-  <action name="Encyclopedia">
-   <property name="text">
-    <string>精灵大全</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>新宋体</family>
-    </font>
-   </property>
-  </action>
-  <action name="Calculator">
-   <property name="text">
-    <string>精灵计算器</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>新宋体</family>
-    </font>
-   </property>
-  </action>
-  <action name="EnableScripts">
-   <property name="text">
-    <string>启用脚本(F9)</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>新宋体</family>
-    </font>
-   </property>
-  </action>
-  <action name="LoadCustomScript">
-   <property name="text">
-    <string>加载脚本</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>新宋体</family>
-    </font>
-   </property>
-  </action>
-  <action name="About">
-   <property name="text">
-    <string>登录器</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>新宋体</family>
-    </font>
-   </property>
-  </action>
-  <action name="UpdateLog">
-   <property name="text">
-    <string>更新日志</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>新宋体</family>
-    </font>
-   </property>
-  </action>
- </widget>
- <resources/>
- <connections/>
+        </property>
+        <property name="iconSize">
+            <size>
+                <width>24</width>
+                <height>24</height>
+            </size>
+        </property>
+        <widget class="QWidget" name="centralwidget"/>
+        <widget class="QMenuBar" name="menubar">
+            <property name="geometry">
+                <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>958</width>
+                    <height>22</height>
+                </rect>
+            </property>
+            <widget class="QMenu" name="menu">
+                <property name="title">
+                    <string>菜单</string>
+                </property>
+                <addaction name="ReFresh"/>
+                <addaction name="SpeedChange"/>
+                <addaction name="SoundOff"/>
+                <addaction name="StayTop"/>
+                <addaction name="CleanCache"/>
+            </widget>
+            <widget class="QMenu" name="menu_2">
+                <property name="title">
+                    <string>脚本</string>
+                </property>
+                <addaction name="EnableScripts"/>
+                <addaction name="LoadCustomScript"/>
+            </widget>
+            <widget class="QMenu" name="menu_3">
+                <property name="title">
+                    <string>功能</string>
+                </property>
+                <addaction name="Encyclopedia"/>
+                <addaction name="Calculator"/>
+            </widget>
+            <widget class="QMenu" name="menu_4">
+                <property name="title">
+                    <string>关于</string>
+                </property>
+                <addaction name="About"/>
+                <addaction name="UpdateLog"/>
+            </widget>
+            <addaction name="menu"/>
+            <addaction name="menu_3"/>
+            <addaction name="menu_2"/>
+            <addaction name="menu_4"/>
+        </widget>
+        <action name="ReFresh">
+            <property name="checkable">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>刷新</string>
+            </property>
+            <property name="font">
+                <font>
+                    <family>新宋体</family>
+                </font>
+            </property>
+        </action>
+        <action name="SpeedChange">
+            <property name="text">
+                <string>变速</string>
+            </property>
+            <property name="font">
+                <font>
+                    <family>新宋体</family>
+                </font>
+            </property>
+        </action>
+        <action name="SoundOff">
+            <property name="text">
+                <string>静音</string>
+            </property>
+            <property name="font">
+                <font>
+                    <family>新宋体</family>
+                </font>
+            </property>
+        </action>
+        <action name="StayTop">
+            <property name="text">
+                <string>置顶</string>
+            </property>
+            <property name="font">
+                <font>
+                    <family>新宋体</family>
+                </font>
+            </property>
+        </action>
+        <action name="CleanCache">
+            <property name="text">
+                <string>清理缓存</string>
+            </property>
+            <property name="font">
+                <font>
+                    <family>新宋体</family>
+                </font>
+            </property>
+        </action>
+        <action name="Encyclopedia">
+            <property name="text">
+                <string>精灵大全</string>
+            </property>
+            <property name="font">
+                <font>
+                    <family>新宋体</family>
+                </font>
+            </property>
+        </action>
+        <action name="Calculator">
+            <property name="text">
+                <string>精灵计算器</string>
+            </property>
+            <property name="font">
+                <font>
+                    <family>新宋体</family>
+                </font>
+            </property>
+        </action>
+        <action name="EnableScripts">
+            <property name="text">
+                <string>启用脚本(F9)</string>
+            </property>
+            <property name="font">
+                <font>
+                    <family>新宋体</family>
+                </font>
+            </property>
+        </action>
+        <action name="LoadCustomScript">
+            <property name="text">
+                <string>加载脚本</string>
+            </property>
+            <property name="font">
+                <font>
+                    <family>新宋体</family>
+                </font>
+            </property>
+        </action>
+        <action name="About">
+            <property name="text">
+                <string>登录器</string>
+            </property>
+            <property name="font">
+                <font>
+                    <family>新宋体</family>
+                </font>
+            </property>
+        </action>
+        <action name="UpdateLog">
+            <property name="text">
+                <string>更新日志</string>
+            </property>
+            <property name="font">
+                <font>
+                    <family>新宋体</family>
+                </font>
+            </property>
+        </action>
+    </widget>
+    <resources/>
+    <connections/>
 </ui>
