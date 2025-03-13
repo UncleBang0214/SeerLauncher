@@ -8,6 +8,7 @@ import json
 import sys
 import os
 import base64
+import pyttsx3
 from pycaw.utils import AudioUtilities
 from pynput.keyboard import Listener, Key
 import win32com
@@ -54,7 +55,7 @@ update_content = """
     <h2>登录器更新日志</h2>
     <h3>v1.1.2 (2025-03-13)</h3>
     <ul>
-        <li>新增chrome内核，支持本地保存密码、内核切换</li>
+        <li>新增chrome内核，支持本地保存密码、内核切换，修复精灵计算器性格下拉框出现重复枚举的问题，优化部分用户存在的黑屏问题，新增自定义语音播报</li>
     </ul>
     <h3>v1.1.1 (2025-03-09)</h3>
     <ul>
@@ -933,6 +934,9 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.EnableScripts.triggered.connect(self.enable_script)
         self.LoadCustomScript.triggered.connect(self.open_load_script_dialog)
         self.confirmExitDialog = ConfirmExitDialog()
+        self.speech_engine = pyttsx3.init()
+        self.speech_engine.setProperty('rate', 150)  # 默认语速
+        self.speech_engine.setProperty('volume', 0.9)  # 默认音量
         if not dm:
             self.EnableScripts.setEnabled(False)
             self.LoadCustomScript.setEnabled(False)
@@ -1253,18 +1257,12 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
             debug_print("=====================脚本开始运行=====================")
 
-            # 在主循环开始前添加
-            dm.EnableDisplayDebug(0)  # 关闭调试信息输出
-            dm.EnableFindPicMultithread(1)  # 启用多线程识别
-
-            # 在每次操作前强制释放GDI资源
-            ctypes.windll.user32.GdiFlush()  # 防止GDI资源泄露
-
             tasks = config.get("tasks", [])
             start_task_name = config.get("start_task", "")
             task_map = {task.get("name", f"task_{i + 1}"): task for i, task in enumerate(tasks)}
             current_task_name = start_task_name
             task_loop_counts = {}
+            self._init_speech_settings(config)
 
             while global_is_scripts_enabled:
                 if not current_task_name or current_task_name not in task_map:
@@ -1284,12 +1282,16 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                 # 图像识别逻辑
                 if use_image_recognition and target_image:
                     found = dm.FindPic(0, 0, self.width(), self.height(), resource_path(target_image), "000000", 0.8, 1)
+                    time.sleep(0.1)
                     if found[1] == -1 and found[2] == -1:
                         debug_print(f"任务 [{current_task_name}] 超时未找到图片 {target_image}，跳过此任务")
                         current_task_name = next_task_name
                         continue
                     else:
                         debug_print(f"任务 [{current_task_name}] 识别到 {target_image}")
+
+                if "speech" in current_task:
+                    self._speak(current_task["speech"])
 
                 # 点击坐标逻辑
                 if isinstance(click_coords[0], int):  # 单个坐标
@@ -1342,7 +1344,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
     # 执行额外操作逻辑
     def perform_extra_action(self, extra_action_config):
-        steps = extra_action_config.get("actions", [])  # 使用 "actions" 字段
+        steps = extra_action_config.get("actions", [])
         if not steps:
             debug_print("[额外操作] 未配置任何操作步骤，跳过额外操作")
             return
@@ -1357,11 +1359,15 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
             # 图像识别逻辑
             if use_image_recognition and target_image:
-                found = dm.FindPic(0, 0, 4000, 4000, resource_path(target_image), "000000", 0.9, 0)
+                found = dm.FindPic(0, 0, self.width(), self.height(), resource_path(target_image), "000000", 0.8, 1)
+                time.sleep(0.1)
                 if found[1] == -1 and found[2] == -1:
                     debug_print(f"[额外操作 第{step_index + 1}步] 未找到图片 {target_image}，跳过点击")
                 else:
                     debug_print(f"[额外操作 第{step_index + 1}步] 识别到 {target_image}")
+
+            if "speech" in step:
+                self._speak(step["speech"])
 
             # 点击坐标逻辑
             if isinstance(click_coords[0], int):  # 单个坐标
@@ -1382,6 +1388,31 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             time.sleep(delay)
 
         debug_print("[额外操作] 额外操作完成，继续循环")
+
+    def _init_speech_settings(self, config):
+        """初始化语音设置"""
+        speech_config = config.get("speech_settings", {})
+        # 语速设置（150为正常值，范围50-300）
+        self.speech_engine.setProperty('rate', speech_config.get("speed", 150))
+        # 音量设置（0.0-1.0）
+        self.speech_engine.setProperty('volume', speech_config.get("volume", 0.9))
+        # 是否启用语音
+        self.speech_enabled = speech_config.get("enable", True)
+
+    def _speak(self, content):
+        """执行语音播报"""
+        if not self.speech_enabled:
+            return
+
+        try:
+            # 异步语音播报（不阻塞主线程）
+            def async_speak():
+                self.speech_engine.say(content)
+                self.speech_engine.runAndWait()
+
+            threading.Thread(target=async_speak).start()
+        except Exception as e:
+            debug_print(f"语音播报失败: {str(e)}")
 
     # 重写关闭窗口事件
     def closeEvent(self, event):
