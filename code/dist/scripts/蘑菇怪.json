@@ -1,0 +1,58 @@
+{
+    "tasks": [
+        {
+            "name": "task_1",
+            "image": "img/蘑菇怪/蘑菇怪.bmp",
+            "coords": [580, 440],
+            "next_task": "task_2",
+            "interval": 1,
+			"use_image_recognition": "True"
+        },
+        {
+            "name": "task_2",
+            "image": "img/基础/战斗胜利.bmp",
+            "coords": [[480, 370], [480, 370], [480, 370], [480, 370]],
+            "next_task": "task_3",
+            "interval": 4,
+			"use_image_recognition": "True",
+			"extra_action": {
+				"trigger_interval": 5,
+				"actions": [
+					{
+						"image": "img/基础/精灵背包.bmp",
+						"coords": [860, 540],
+						"delay": 0.2,
+						"use_image_recognition": "True"
+					},
+					{
+						"image": "img/基础/治疗按钮.bmp",
+						"coords": [440, 430],
+						"delay": 0.2,
+						"use_image_recognition": "True"
+					},
+					{
+						"image": "img/基础/确认1.bmp",
+						"coords": [480, 360],
+						"delay": 0.2,
+						"use_image_recognition": "True"
+					},
+					{
+						"image": "img/基础/关闭背包.bmp",
+						"coords": [450, 170],
+						"delay": 0.2,
+						"use_image_recognition": "True"
+					}
+				]
+			}
+        },
+        {
+            "name": "task_3",
+            "image": "img/基础/精灵升级.bmp",
+            "coords": [[480, 420], [480, 370], [480, 370]],
+            "next_task": "task_1",
+            "interval": 1,
+			"use_image_recognition": "True"
+        }
+    ],
+    "start_task": "task_1"
+}
