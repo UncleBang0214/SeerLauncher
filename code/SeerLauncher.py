@@ -1,22 +1,25 @@
 import ctypes
-
+from ctypes import CDLL, c_float
 import requests
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings, QWebEngineProfile
-from pynput.keyboard import Listener, Key
 import threading
 import time
 import atexit
 import json
 import sys
 import os
-from ctypes import CDLL, c_float
+import base64
 from pycaw.utils import AudioUtilities
+from pynput.keyboard import Listener, Key
+import win32com
 from win32com.client import Dispatch
-from PyQt5 import QAxContainer, QtWidgets, QtCore
-from PyQt5.QtCore import QRect, pyqtSignal, Qt, QEvent, QUrl, QTimer
+
+from PyQt5 import QtWidgets, QtCore, QAxContainer
+from PyQt5.QtCore import QRect, Qt, QUrl, QTimer
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDialog, QMessageBox, QFileDialog, QComboBox, QVBoxLayout, \
-    QScrollArea, QWidget, QLabel, QDialogButtonBox, QGraphicsDropShadowEffect
-from PyQt5.QtGui import QIcon, QColor
+    QScrollArea, QWidget, QLabel, QDialogButtonBox
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings, QWebEngineProfile
+
 from Ui_MainWindow import Ui_MainWindow
 from Ui_OnStartDialogWindow import Ui_OnStartDialogWindow
 from Ui_LoginWindow import Ui_LoginWindow
@@ -27,14 +30,87 @@ from Ui_ConfirmExitDialogWindow import Ui_ConfirmExitDialogWindow
 from Ui_EncyclopediaWindow import Ui_EncyclopediaWindow
 
 # 全局变量定义
-launcher_name = "茶杯登录器"  # 登录器名称
-global_is_muted = False  # 静音状态
-global_is_stay_on_top = False  # 窗口置顶状态标志
+launcher_name = "茶杯登录器v1.1.2"  # 登录器名称
 dm = None  # 大漠插件对象
-global_is_scripts_enabled = False  # 脚本功能是否启用
+global_debug_mode = True  # debug模式，打包前需置为False，避免频繁打印消耗资源
+global_launcher_mode = 0  # 0：Ie内核，1：Chrome内核
+global_is_muted = False  # 静音状态
+global_is_stay_on_top = False  # 窗口置顶状态
+global_is_scripts_enabled = False  # 脚本是否启用
 global_script_path = None  # 当前脚本路径
 script_thread = None  # 脚本线程
-is_running = False  # 快捷键启停标志
+is_running = False  # 快捷键启停
+about_content = """
+    <h2>关于茶杯登录器</h2>
+    <p>版本：v1.1.2</p>
+    <p>开发者：小茶杯</p>
+    <p>描述：</p>
+    <p>下班闲暇之余制作，开发该登录器旨在优化各位的游玩体验</p>
+    <p>纯公益项目，不接受任何形式的赞助！！！</p>
+    <p>通过任何付费途径获得此软件均为上当受骗！！！</p>
+    """
+
+update_content = """
+    <h2>登录器更新日志</h2>
+    <h3>v1.1.2 (2025-03-13)</h3>
+    <ul>
+        <li>新增chrome内核，支持本地保存密码、内核切换</li>
+    </ul>
+    <h3>v1.1.1 (2025-03-09)</h3>
+    <ul>
+        <li>修复识图任务逻辑、登录时默认选取最新登录的账号、优化登录器依赖、精灵大全扩展至1000序号、修复计算器取整逻辑</li>
+    </ul>
+    <h3>v1.0.0 (2025-03-03)</h3>
+    <ul>
+        <li>新增清理缓存功能、UI美化、用户协议</li>
+    </ul>
+    <h3>v0.9.9 (2025-02-28)</h3>
+    <ul>
+        <li>新增本地账号存储（不包含密码）、登录器信息</li>
+    </ul>
+    <h3>v0.9.8 (2025-02-27)</h3>
+    <ul>
+        <li>新增爬虫，完善精灵大全格式，重构登录逻辑</li>
+    </ul>
+    <h3>v0.9.7 (2025-02-25)</h3>
+    <ul>
+        <li>新增精灵大全，支持查询、计算器联动</li>
+    </ul>
+    <h3>v0.9.6 (2025-02-23)</h3>
+    <ul>
+        <li>新增快捷键启停脚本，完善识图点击逻辑，额外操作支持识图和循环执行</li>
+    </ul>
+    <h3>v0.9.5 (2025-02-19)</h3>
+    <ul>
+        <li>新增精灵能力值计算器</li>
+    </ul>
+    <h3>v0.9.4 (2025-02-14)</h3>
+    <ul>
+        <li>新增加载定义脚本功能，支持自主启停，支持自定义编写json脚本</li>
+    </ul>
+    <h3>v0.9.3 (2025-02-10)</h3>
+    <ul>
+        <li>新增静音功能，制作识图点击脚本雏形</li>
+    </ul>
+    <h3>v0.9.2 (2025-02-07)</h3>
+    <ul>
+        <li>基于1920*1080分辨率调整窗口大小，添加窗口logo</li>
+    </ul>
+    <h3>v0.9.1 (2025-02-05)</h3>
+    <ul>
+        <li>新增独立的登录窗口，实现了变速功能</li>
+    </ul>
+    <h3>v0.9.0 (2025-02-04)</h3>
+    <ul>
+        <li>实现了加载页面、刷新和绕过登录</li>
+    </ul>
+    """
+
+
+def debug_print(*args, **kwargs):
+    """带条件判断的调试输出"""
+    if global_debug_mode:
+        print(*args, **kwargs)
 
 
 def resource_path(relative_path):
@@ -53,19 +129,19 @@ def initialize_dm():
     try:
         dll_path = resource_path('ini/d.dll')
         if not os.path.exists(dll_path):
-            print(f"未找到dll: {dll_path}")
+            debug_print(f"未找到dll: {dll_path}")
             return False
         result = os.system(f"regsvr32 /s {dll_path}")
         if result == 0:
-            print(f"{dll_path} 注册成功！")
+            debug_print(f"{dll_path} 注册成功！")
         else:
-            print(f"{dll_path} 注册失败，请检查是否以管理员身份运行！")
+            debug_print(f"{dll_path} 注册失败，请检查是否以管理员身份运行！")
             return False
         dm = Dispatch('dm.dmsoft')
-        print(f"已加载大漠插件，版本: {dm.Ver()}")
+        debug_print(f"已加载大漠插件，版本: {dm.Ver()}")
         return True
     except Exception as e:
-        print(f"初始化大漠插件失败: {e}")
+        debug_print(f"初始化大漠插件失败: {e}")
         return False
 
 
@@ -73,21 +149,21 @@ def unregister_dm():
     """注销大漠插件"""
     global dm
     if dm is not None:
-        print("正在注销大漠插件")
+        debug_print("正在注销大漠插件")
         try:
             dll_path = resource_path('ini/d.dll')
             if os.path.exists(dll_path):
                 result = os.system(f"regsvr32 /u /s {dll_path}")
                 if result == 0:
-                    print(f"{dll_path} 注销成功！")
+                    debug_print(f"{dll_path} 注销成功！")
                 else:
-                    print(f"{dll_path} 注销失败，请检查权限！")
+                    debug_print(f"{dll_path} 注销失败，请检查权限！")
             else:
-                print("未找到大漠插件 DLL 文件，无法注销！")
+                debug_print("未找到大漠插件 DLL 文件，无法注销！")
         except Exception as e:
-            print(f"注销大漠插件失败: {e}")
+            debug_print(f"注销大漠插件失败: {e}")
     else:
-        print("大漠插件未初始化，无需注销！")
+        debug_print("大漠插件未初始化，无需注销！")
 
 
 class OnStartDialog(QtWidgets.QDialog, Ui_OnStartDialogWindow):
@@ -149,14 +225,6 @@ class LoginService:
             raise Exception(f"网络请求失败: {str(e)}")
 
 
-def string_to_hex(s):
-    """处理账号密码字符串"""
-    hex_string = ''.join([format(ord(c), '02x') for c in s])
-    while len(hex_string) < 24:
-        hex_string = '0' + hex_string
-    return hex_string
-
-
 class ConfirmExitDialog(QDialog):
     """确认退出对话框定义"""
 
@@ -174,74 +242,142 @@ class LoginDialog(QDialog, Ui_LoginWindow):
         super(LoginDialog, self).__init__(parent)
         self.setupUi(self)
 
-        # 初始化存储配置
+        # 初始化全局配置
         self.history_file = resource_path('ini/login.json')
         os.makedirs(os.path.dirname(self.history_file), exist_ok=True)
+        self.config = {
+            "history_accounts": [],
+            "remember_password": False,
+            "launcher_mode": 0
+        }
 
         # 初始化界面
         self.init_ui()
-        self.load_history()
+        self.load_config()
 
         # 连接信号
         self.confirmButton.clicked.connect(self.handle_login)
-        self.accountEdit.currentTextChanged.connect(self.clear_password)
+        self.accountEdit.currentTextChanged.connect(self.on_account_changed)
 
     def init_ui(self):
         """初始化界面设置"""
-        # 设置下拉框特性
         self.accountEdit.setEditable(True)
         self.accountEdit.setInsertPolicy(QComboBox.InsertAtTop)
-
-        # 保持你原有的窗口图标设置
         self.setWindowIcon(self.windowIcon())
 
-    def load_history(self):
-        """加载历史账号并设置默认选中最后一次登录的账号"""
+    def load_config(self):
+        """加载配置文件"""
         try:
             if os.path.exists(self.history_file):
                 with open(self.history_file, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    history_accounts = data.get("history_accounts", [])
+                    self.config = json.load(f)
 
-                    # 添加历史记录到下拉框
-                    self.accountEdit.addItems(history_accounts)
+                    # 清除旧数据并重新加载
+                    self.accountEdit.clear()
 
-                    # 设置默认选中最后一次登录的账号（列表第一个元素）
-                    if history_accounts:
-                        self.accountEdit.setCurrentIndex(0)  # 选中最新账号
-                        self.accountEdit.lineEdit().setSelection(0, len(history_accounts[0]))  # 全选文本方便直接输入
+                    # 按最新到最旧顺序添加账号
+                    for acc in self.config["history_accounts"]:
+                        self.accountEdit.addItem(acc["account"])
+
+                    # 设置默认选中第一个账号（最新）
+                    if self.accountEdit.count() > 0:
+                        self.accountEdit.setCurrentIndex(0)
+                        current_text = self.accountEdit.currentText()
+                        self.accountEdit.lineEdit().setSelection(0, len(current_text))
+
+                    # 同步密码显示状态
+                    if self.config["remember_password"]:
+                        self._load_password_for_current_account()
+
+                    # 设置全局选项
+                    self.RememberPassWord.setChecked(self.config["remember_password"])
+                    self.LauncherMode.setChecked(self.config["launcher_mode"] == 1)
+
         except Exception as e:
-            QMessageBox.warning(self, "警告", f"历史记录加载失败: {str(e)}")
+            QMessageBox.warning(self, "警告", f"配置加载失败: {str(e)}")
+            # 初始化空配置防止崩溃
+            self.config = {
+                "history_accounts": [],
+                "remember_password": False,
+                "launcher_mode": 0
+            }
 
-    def save_history(self, account):
-        """保存账号到历史记录"""
+    def _load_password_for_current_account(self):
+        """为当前选中账号加载密码"""
+        current_account = self.accountEdit.currentText()
+        if current_account:
+            for acc in self.config["history_accounts"]:
+                if acc["account"] == current_account:
+                    try:
+                        pwd = base64.b64decode(acc["password"]).decode('utf-8')
+                        self.passwordEdit.setText(pwd)
+                    except:
+                        self.passwordEdit.clear()
+                    break
+
+    def on_account_changed(self):
+        """切换账号时更新密码"""
+        current_account = self.accountEdit.currentText()
+        if current_account and self.config["remember_password"]:
+            # 查找存储的密码
+            for acc in self.config["history_accounts"]:
+                if acc["account"] == current_account:
+                    try:
+                        pwd = base64.b64decode(acc["password"]).decode()
+                        self.passwordEdit.setText(pwd)
+                    except:
+                        self.passwordEdit.clear()
+                    break
+        else:
+            self.passwordEdit.clear()
+
+    def save_config(self):
+        """保存配置"""
         try:
-            # 获取现有账号（去重处理）
-            history = []
+            # 验证当前账号有效性
+            current_account = self.accountEdit.currentText().strip()
+            if not current_account:
+                return
+
+            # 构建新账号记录
+            new_record = {
+                "account": current_account,
+                "password": base64.b64encode(self.passwordEdit.text().encode()).decode()
+                if self.RememberPassWord.isChecked() else ""
+            }
+
+            # 更新历史记录（去重+插入到首位）
+            self.config["history_accounts"] = [
+                record for record in self.config["history_accounts"]
+                if record["account"] != current_account
+            ]
+            self.config["history_accounts"].insert(0, new_record)
+            self.config["history_accounts"] = self.config["history_accounts"][:10]  # 保留最近10条
+
+            # 更新全局设置
+            self.config.update({
+                "remember_password": self.RememberPassWord.isChecked(),
+                "launcher_mode": 1 if self.LauncherMode.isChecked() else 0
+            })
+
+            # 确保目录存在
+            os.makedirs(os.path.dirname(self.history_file), exist_ok=True)
+
+            # 原子化写入（避免文件损坏）
+            temp_file = self.history_file + ".tmp"
+            with open(temp_file, 'w', encoding='utf-8') as f:
+                json.dump(self.config, f, indent=2, ensure_ascii=False)
+
+            # 替换原文件
             if os.path.exists(self.history_file):
-                with open(self.history_file, 'r', encoding='utf-8') as f:
-                    history = json.load(f).get("history_accounts", [])
+                os.remove(self.history_file)
+            os.rename(temp_file, self.history_file)
 
-            # 更新历史记录
-            if account not in history:
-                history.insert(0, account)
-                history = history[:10]  # 保留最近10个账号
-
-                # 写入文件
-                with open(self.history_file, 'w', encoding='utf-8') as f:
-                    json.dump({"history_accounts": history}, f, indent=2)
-
-                # 更新下拉框
-                self.accountEdit.insertItem(0, account)
         except Exception as e:
-            QMessageBox.warning(self, "错误", f"保存失败: {str(e)}")
-
-    def clear_password(self):
-        """切换账号时清空密码"""
-        self.passwordEdit.clear()
+            QMessageBox.critical(self, "错误", f"配置保存失败: {str(e)}")
 
     def handle_login(self):
-        """处理登录按钮点击"""
+        """处理登录逻辑"""
         account = self.accountEdit.currentText().strip()
         password = self.passwordEdit.text().strip()
 
@@ -249,12 +385,16 @@ class LoginDialog(QDialog, Ui_LoginWindow):
             return
 
         try:
+            # 登录服务调用
             service = LoginService()
             auth_data = service.login(account, password)
-            self.save_history(account)
-            # 拼接URL
-            game_url = service.GAME_URL_TEMPLATE.format(session=auth_data['session'])
-            print("生成地址:", game_url)
+
+            # 保存配置
+            self.save_config()
+
+            # 更新全局变量
+            global global_launcher_mode
+            global_launcher_mode = self.config["launcher_mode"]
 
             # 启动主窗口
             self.main_window = MyMainWindow(auth_data)
@@ -263,7 +403,8 @@ class LoginDialog(QDialog, Ui_LoginWindow):
 
         except Exception as e:
             QMessageBox.critical(self, "登录失败", f"错误详情: {str(e)}")
-            self._clear_password_field()
+            self.passwordEdit.clear()
+            self.passwordEdit.setFocus()
 
     def _validate_input(self, email: str, password: str) -> bool:
         """输入验证"""
@@ -285,6 +426,21 @@ class LoginDialog(QDialog, Ui_LoginWindow):
         """清空密码输入"""
         self.passwordEdit.clear()
         self.passwordEdit.setFocus()
+
+    def _clear_saved_password(self, account):
+        """清除指定账号的保存密码"""
+        try:
+            if os.path.exists(self.history_file):
+                with open(self.history_file, 'r+', encoding='utf-8') as f:
+                    data = json.load(f)
+                    for a in data["history_accounts"]:
+                        if a["account"] == account:
+                            a["password"] = ""
+                    f.seek(0)
+                    json.dump(data, f, indent=2)
+                    f.truncate()
+        except:
+            pass
 
 
 class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
@@ -315,14 +471,14 @@ class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
             if value < 1:
                 value = 1
             self.lib.SetRange(c_float(value))
-            print(f"变速为 {value}x.")
+            debug_print(f"变速为 {value}x.")
             self.accept()
         except Exception as e:
-            print(f"变速时发生错误: {e}")
+            debug_print(f"变速时发生错误: {e}")
 
 
 class EncyclopediaWindow(QtWidgets.QMainWindow):
-    """精灵大全（完整功能版）"""
+    """精灵大全"""
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -501,12 +657,30 @@ class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
 
     def _init_character_box(self):
         """初始化性格下拉框"""
-        self.CharacterComboBox.addItems([
-            "固执", "孤独", "调皮", "勇敢", "保守", "稳重",
-            "马虎", "冷静", "胆小", "开朗", "急躁", "天真",
-            "大胆", "顽皮", "无虑", "悠闲", "沉着", "慎重",
-            "温顺", "狂妄", "害羞", "实干", "认真", "浮躁", "坦率"
-        ])
+        # 清空现有选项
+        self.CharacterComboBox.clear()
+
+        # 性格列表（按属性分类）
+        nature_list = [
+            # 攻击型
+            "固执", "孤独", "调皮", "勇敢",
+            # 特攻型
+            "保守", "稳重", "马虎", "冷静",
+            # 速度型
+            "胆小", "开朗", "急躁", "天真",
+            # 防御型
+            "大胆", "顽皮", "无虑", "悠闲",
+            # 特防型
+            "沉着", "慎重", "温顺", "狂妄",
+            # 平衡型
+            "害羞", "实干", "认真", "浮躁", "坦率"
+        ]
+
+        # 添加去重后的列表
+        self.CharacterComboBox.addItems(sorted(set(nature_list), key=nature_list.index))
+
+        # 设置默认选中第一个
+        self.CharacterComboBox.setCurrentIndex(0)
 
     def _init_default_values(self):
         """初始化默认值"""
@@ -747,6 +921,8 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.ReFresh.triggered.connect(self.refresh_page)
         # 菜单
         self.SpeedChange.triggered.connect(self.open_speed_dialog)
+        if global_launcher_mode == 1:
+            self.SpeedChange.setEnabled(False)
         self.SoundOff.triggered.connect(self.set_sound_off)
         self.StayTop.triggered.connect(self.stay_on_top)
         self.CleanCache.triggered.connect(self.clear_cache)
@@ -761,74 +937,57 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             self.EnableScripts.setEnabled(False)
             self.LoadCustomScript.setEnabled(False)
             QMessageBox.warning(self, "提示", "脚本功能需要以管理员权限运行")
-            print("大漠插件未加载，禁用脚本功能按钮")
+            debug_print("大漠插件未加载，禁用脚本功能按钮")
         # 键盘监听器
         self.start_keyboard_listener()
         # 关于
         self.About.triggered.connect(self.open_about)
         self.UpdateLog.triggered.connect(self.open_updatelog)
 
-    """
     # 初始化浏览器组件
     def init_components(self):
-        self.axWidget = QAxContainer.QAxWidget(self.centralwidget)
-        # 初始尺寸设为窗口客户区大小
-        self.axWidget.setGeometry(QRect(0, 0, self.width(), self.height()))
-        # 设置Flash控件的ClassID
-        self.axWidget.setControl("{8856F961-340A-11D0-A96B-00C04FD705A2}")
-        # 登录游戏
-        self.navigate_to_game()
+        global global_launcher_mode
+        if global_launcher_mode == 0:
+            self.axWidget = QAxContainer.QAxWidget(self.centralwidget)
+            # 初始尺寸设为窗口客户区大小
+            self.axWidget.setGeometry(QRect(-17, -17, self.width(), self.height()))
+            # 设置Flash控件的ClassID
+            self.axWidget.setControl("{8856F961-340A-11D0-A96B-00C04FD705A2}")
+            # 登录
+            game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
+            debug_print("加载:", game_url)
+            self.axWidget.dynamicCall("Navigate(const QString&)", game_url)
 
-    # 加载游戏页面并配置缩放
-    def navigate_to_game(self):
-        # 设置缩放模式为 ShowAll（保持宽高比填充）
-        self.axWidget.dynamicCall(
-            "SetProperty(const QString&, const QVariant&)",
-            "ScaleMode",
-            "ShowAll"  # 可选值：NoScale | ExactFit | ShowAll
-        )
+        if global_launcher_mode == 1:
+            # 创建浏览器组件
+            self.browser = QWebEngineView()
 
-        # 禁用右键菜单
-        self.axWidget.dynamicCall(
-            "SetProperty(const QString&, const QVariant&)",
-            "Menu",
-            False
-        )
-        game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
-        print("加载:", game_url)
-        self.axWidget.dynamicCall("Navigate(const QString&)", game_url)
+            # 创建容器并设置为中心部件
+            container = QWidget()
+            self.setCentralWidget(container)
+
+            # 设置浏览器在容器中的位置和尺寸
+            self.browser.setParent(container)
+            self.browser.setGeometry(QRect(-32, -16, 1024, 960))
+            # 登录
+            self.configure_flash()
+            game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
+            debug_print("加载：", game_url)
+            self.browser.load(QUrl(game_url))
+            QTimer.singleShot(3000, self.check_flash_status)
 
     # 刷新
     def refresh_page(self):
-        game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
-        print("刷新:", game_url)
-        self.axWidget.dynamicCall("Navigate(const QString&)", game_url)
-    """
+        global global_launcher_mode
+        if global_launcher_mode == 0:
+            game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
+            debug_print("刷新:", game_url)
+            self.axWidget.dynamicCall("Navigate(const QString&)", game_url)
 
-    # 初始化浏览器组件
-    def init_components(self):
-        # 创建浏览器组件
-        self.browser = QWebEngineView()
-
-        # 创建容器并设置为中心部件
-        container = QWidget()
-        self.setCentralWidget(container)
-
-        # 设置浏览器在容器中的位置和尺寸
-        self.browser.setParent(container)
-        self.browser.setGeometry(QRect(-32, -16, 1024, 960))
-
-        self.configure_flash()
-        game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
-        print("加载：", game_url)
-        self.browser.load(QUrl(game_url))
-        QTimer.singleShot(3000, self.check_flash_status)
-
-    # 刷新
-    def refresh_page(self):
-        game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
-        print("刷新:", game_url)
-        self.browser.load(QUrl(game_url))
+        if global_launcher_mode == 1:
+            game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
+            debug_print("刷新:", game_url)
+            self.browser.load(QUrl(game_url))
 
     def configure_flash(self):
         """配置Flash插件参数"""
@@ -861,11 +1020,11 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
     def handle_flash_check(self, result):
         """处理检测结果"""
         if result:
-            print("✅ Flash内容已成功加载")
+            debug_print("✅ Flash内容已成功加载")
         else:
-            print("❌ Flash加载失败，请检查：")
-            print("1. Flash插件路径是否正确")
-            print("2. 网站是否要求手动允许Flash")
+            debug_print("❌ Flash加载失败，请检查：")
+            debug_print("1. Flash插件路径是否正确")
+            debug_print("2. 网站是否要求手动允许Flash")
 
     # 变速输入框
     def open_speed_dialog(self):
@@ -875,15 +1034,30 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
     # 静音
     def set_sound_off(self):
-        global global_is_muted
-        if global_is_muted:
-            self.browser.page().setAudioMuted(False)
-            self.SoundOff.setText("静音")
-            global_is_muted = False
-        else:
-            self.browser.page().setAudioMuted(True)
-            self.SoundOff.setText("√静音")
-            global_is_muted = True
+        global global_launcher_mode, global_is_muted
+        if global_launcher_mode == 0:
+            sessions = AudioUtilities.GetAllSessions()
+            for session in sessions:
+                volume = session.SimpleAudioVolume
+                if session.Process and session.Process.name() == f"{launcher_name}.exe":
+                    if global_is_muted:
+                        volume.SetMute(0, None)
+                        self.SoundOff.setText("静音")
+                        global_is_muted = False
+                    else:
+                        volume.SetMute(1, None)
+                        self.SoundOff.setText("√静音")
+                        global_is_muted = True
+
+        if global_launcher_mode == 1:
+            if global_is_muted:
+                self.browser.page().setAudioMuted(False)
+                self.SoundOff.setText("静音")
+                global_is_muted = False
+            else:
+                self.browser.page().setAudioMuted(True)
+                self.SoundOff.setText("√静音")
+                global_is_muted = True
 
     # 窗口置顶
     def stay_on_top(self):
@@ -901,7 +1075,35 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
     # 清理浏览器缓存
     def clear_cache(self):
         """清理浏览器缓存"""
-        try:
+        global global_launcher_mode
+        if global_launcher_mode == 0:
+            # 通过COM接口清理
+            ie = win32com.client.Dispatch("InternetExplorer.Application")
+
+            # 清理Cookies
+            ie.Navigate("javascript:document.execCommand('ClearAuthenticationCache')")
+
+            # 清理历史记录和缓存
+            cache_manager = win32com.client.Dispatch("InetCpl.CacheManager")
+            cache_manager.DeleteCacheEntry("", 0x00000001)  # 清理临时文件
+
+            # 清理本地存储
+            self._delete_ie_files([
+                os.path.join(os.environ['USERPROFILE'], r'AppData\Local\Microsoft\Windows\INetCache'),
+                os.path.join(os.environ['USERPROFILE'], r'AppData\Local\Microsoft\Windows\History')
+            ])
+
+            # 使用系统命令清理
+            os.system('RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 255')
+
+            QMessageBox.information(
+                self,
+                "清理完成",
+                "IE缓存已清理完成！\n包括：\n- Cookies\n- 历史记录\n- 临时文件",
+                QMessageBox.Ok
+            )
+
+        if global_launcher_mode == 1:
             profile = QWebEngineProfile.defaultProfile()
 
             # 清除HTTP缓存
@@ -917,28 +1119,20 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
             # 使用JavaScript清理更多存储（可选）
             js_clean = """
-            localStorage.clear();
-            sessionStorage.clear();
-            indexedDB.databases().then(dbs => {
-                for (let db of dbs) {
-                    indexedDB.deleteDatabase(db.name);
-                }
-            });
-            """
+                localStorage.clear();
+                sessionStorage.clear();
+                indexedDB.databases().then(dbs => {
+                    for (let db of dbs) {
+                        indexedDB.deleteDatabase(db.name);
+                    }
+                });
+                """
             self.browser.page().runJavaScript(js_clean)
 
             QMessageBox.information(
                 self,
                 "清理完成",
                 "浏览器缓存已清理完成！\n包括：\n- HTTP缓存\n- Cookies\n- 本地存储数据",
-                QMessageBox.Ok
-            )
-
-        except Exception as e:
-            QMessageBox.critical(
-                self,
-                "清理错误",
-                f"缓存清理失败：{str(e)}",
                 QMessageBox.Ok
             )
 
@@ -961,14 +1155,14 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             if not global_script_path:
                 QMessageBox.warning(self, "提示", "请先选择脚本文件")
                 return
-            print("脚本功能已启用")
+            debug_print("脚本功能已启用")
             self.EnableScripts.setText("√启用脚本功能")
             global_is_scripts_enabled = True
             is_running = True
             script_thread = threading.Thread(target=self.run_script, daemon=True)
             script_thread.start()
         else:
-            print("脚本功能已禁用")
+            debug_print("脚本功能已禁用")
             self.EnableScripts.setText("启用脚本功能")
             global_is_scripts_enabled = False
             is_running = False
@@ -980,7 +1174,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         if dialog.exec_():
             global_script_path = dialog.get_selected_script_path()
             if global_script_path:
-                print(f"加载脚本: {global_script_path}")
+                debug_print(f"加载脚本: {global_script_path}")
 
     # 加载脚本
     def load_script_config(self, config_path):
@@ -988,82 +1182,18 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             with open(config_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except Exception as e:
-            print(f"加载配置文件失败: {e}")
+            debug_print(f"加载配置文件失败: {e}")
             return None
 
     # 关于登录器
     def open_about(self):
-        about_content = """
-        <h2>关于茶杯登录器</h2>
-        <p>版本：v1.1.2</p>
-        <p>开发者：小茶杯</p>
-        <p>描述：</p>
-        <p>下班闲暇之余制作，开发该登录器旨在优化各位的游玩体验</p>
-        <p>纯公益项目，不接受任何形式的赞助！！！</p>
-        <p>通过任何付费途径获得此软件均为上当受骗！！！</p>
-        """
-
+        global about_content
         dialog = MessageDialog("关于", about_content, self)
         dialog.exec_()
 
     # 关于更新日志
     def open_updatelog(self):
-        update_content = """
-        <h2>登录器更新日志</h2>
-        <h3>v1.1.2 (2025-03-12)</h3>
-        <ul>
-            <li>内核重构</li>
-        </ul>
-        <h3>v1.1.1 (2025-03-09)</h3>
-        <ul>
-            <li>修复识图任务逻辑、登录时默认选取最新登录的账号、优化登录器依赖、精灵大全扩展至1000序号、修复计算器取整逻辑</li>
-        </ul>
-        <h3>v1.0.0 (2025-03-03)</h3>
-        <ul>
-            <li>新增清理缓存功能、UI美化、用户协议</li>
-        </ul>
-        <h3>v0.9.9 (2025-02-28)</h3>
-        <ul>
-            <li>新增本地账号存储（不包含密码）、登录器信息</li>
-        </ul>
-        <h3>v0.9.8 (2025-02-27)</h3>
-        <ul>
-            <li>新增爬虫，完善精灵大全格式，重构登录逻辑</li>
-        </ul>
-        <h3>v0.9.7 (2025-02-25)</h3>
-        <ul>
-            <li>新增精灵大全，支持查询、计算器联动</li>
-        </ul>
-        <h3>v0.9.6 (2025-02-23)</h3>
-        <ul>
-            <li>新增快捷键启停脚本，完善识图点击逻辑，额外操作支持识图和循环执行</li>
-        </ul>
-        <h3>v0.9.5 (2025-02-19)</h3>
-        <ul>
-            <li>新增精灵能力值计算器</li>
-        </ul>
-        <h3>v0.9.4 (2025-02-14)</h3>
-        <ul>
-            <li>新增加载定义脚本功能，支持自主启停，支持自定义编写json脚本</li>
-        </ul>
-        <h3>v0.9.3 (2025-02-10)</h3>
-        <ul>
-            <li>新增静音功能，制作识图点击脚本雏形</li>
-        </ul>
-        <h3>v0.9.2 (2025-02-07)</h3>
-        <ul>
-            <li>基于1920*1080分辨率调整窗口大小，添加窗口logo</li>
-        </ul>
-        <h3>v0.9.1 (2025-02-05)</h3>
-        <ul>
-            <li>新增独立的登录窗口，实现了变速功能</li>
-        </ul>
-        <h3>v0.9.0 (2025-02-04)</h3>
-        <ul>
-            <li>实现了加载页面、刷新和绕过登录</li>
-        </ul>
-        """
-
+        global update_content
         dialog = MessageDialog("更新日志", update_content, self)
         dialog.exec_()
 
@@ -1082,7 +1212,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                     is_running = False
                     global_is_scripts_enabled = False
                     self.EnableScripts.setText("启用脚本功能")
-                    print("脚本已通过快捷键停止")
+                    debug_print("脚本已通过快捷键停止")
                 else:
                     # 如果脚本未运行，启动脚本
                     if not global_script_path:
@@ -1090,7 +1220,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                     is_running = True
                     global_is_scripts_enabled = True
                     self.EnableScripts.setText("√启用脚本功能")
-                    print("脚本已通过快捷键启动")
+                    debug_print("脚本已通过快捷键启动")
                     # 启动脚本线程
                     script_thread = threading.Thread(target=self.run_script, daemon=True)
                     script_thread.start()
@@ -1102,7 +1232,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         global global_is_scripts_enabled, dm
         try:
             if not dm:
-                print("大漠插件未加载")
+                debug_print("大漠插件未加载")
                 QMessageBox.warning(self, "提示", "该功能需要以管理员权限运行")
                 global_is_scripts_enabled = False
                 return
@@ -1110,18 +1240,25 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             hwnd = int(self.winId())
             bind_result = dm.BindWindow(hwnd, "normal", "normal", "normal", 0)
             if not bind_result:
-                print("窗口绑定失败")
+                debug_print("窗口绑定失败")
                 global_is_scripts_enabled = False
                 return
 
             # 加载脚本配置
             config = self.load_script_config(global_script_path)
             if not config:
-                print("无法加载脚本配置文件，脚本终止")
+                debug_print("无法加载脚本配置文件，脚本终止")
                 global_is_scripts_enabled = False
                 return
 
-            print("=====================脚本开始运行=====================")
+            debug_print("=====================脚本开始运行=====================")
+
+            # 在主循环开始前添加
+            dm.EnableDisplayDebug(0)  # 关闭调试信息输出
+            dm.EnableFindPicMultithread(1)  # 启用多线程识别
+
+            # 在每次操作前强制释放GDI资源
+            ctypes.windll.user32.GdiFlush()  # 防止GDI资源泄露
 
             tasks = config.get("tasks", [])
             start_task_name = config.get("start_task", "")
@@ -1131,7 +1268,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 
             while global_is_scripts_enabled:
                 if not current_task_name or current_task_name not in task_map:
-                    print("当前任务无效，返回起始任务")
+                    debug_print("当前任务无效，返回起始任务")
                     current_task_name = start_task_name
                     continue
 
@@ -1142,36 +1279,36 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                 task_interval = current_task.get("interval", 1)
                 use_image_recognition = current_task.get("use_image_recognition", True)
 
-                print(f"\n=====================任务 [{current_task_name}] 开始执行=====================")
+                debug_print(f"\n=====================任务 [{current_task_name}] 开始执行=====================")
 
                 # 图像识别逻辑
                 if use_image_recognition and target_image:
-                    found = dm.FindPic(0, 0, 4000, 4000, resource_path(target_image), "000000", 0.9, 0)
+                    found = dm.FindPic(0, 0, self.width(), self.height(), resource_path(target_image), "000000", 0.8, 1)
                     if found[1] == -1 and found[2] == -1:
-                        print(f"任务 [{current_task_name}] 超时未找到图片 {target_image}，跳过此任务")
+                        debug_print(f"任务 [{current_task_name}] 超时未找到图片 {target_image}，跳过此任务")
                         current_task_name = next_task_name
                         continue
                     else:
-                        print(f"任务 [{current_task_name}] 识别到 {target_image}")
+                        debug_print(f"任务 [{current_task_name}] 识别到 {target_image}")
 
                 # 点击坐标逻辑
                 if isinstance(click_coords[0], int):  # 单个坐标
                     click_x, click_y = click_coords
                     dm.MoveTo(click_x, click_y)
                     dm.LeftClick()
-                    print(f"任务 [{current_task_name}] 点击坐标: ({click_x}, {click_y})")
+                    debug_print(f"任务 [{current_task_name}] 点击坐标: ({click_x}, {click_y})")
                 elif isinstance(click_coords[0], list):  # 多个坐标
                     for i, coord in enumerate(click_coords):
                         click_x, click_y = coord
                         dm.MoveTo(click_x, click_y)
                         dm.LeftClick()
-                        print(f"任务 [{current_task_name}] 第 {i + 1} 次点击坐标: ({click_x}, {click_y})")
+                        debug_print(f"任务 [{current_task_name}] 第 {i + 1} 次点击坐标: ({click_x}, {click_y})")
                         time.sleep(0.2)  # 添加短暂停顿以避免过于频繁的操作
 
                 # 更新循环计数
                 task_loop_counts[current_task_name] = task_loop_counts.get(current_task_name, 0) + 1
                 loop_count = task_loop_counts[current_task_name]
-                print(
+                debug_print(
                     f"\n=====================任务 [{current_task_name}] 当前循环计数: {loop_count} =====================\n")
 
                 # 执行额外操作
@@ -1179,35 +1316,35 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                 if extra_action_config:
                     trigger_interval = extra_action_config.get("trigger_interval", 7)
                     if loop_count % trigger_interval == 0:
-                        print(
+                        debug_print(
                             f"[额外操作] 条件满足 (循环计数 {loop_count} % 触发间隔 {trigger_interval} == 0)，准备执行额外操作")
                         self.perform_extra_action(extra_action_config)
-                        print("[额外操作] 额外操作完成，继续循环")
+                        debug_print("[额外操作] 额外操作完成，继续循环")
                     else:
-                        print(
+                        debug_print(
                             f"[额外操作] 当前循环计数 {loop_count} 不满足触发条件 (触发间隔 {trigger_interval})，跳过额外操作")
 
                 # 跳转到下一个任务
                 current_task_name = next_task_name
                 if global_is_scripts_enabled:
-                    print(f"任务 [{current_task_name}] 等待 {task_interval} 秒以确保下一步目标出现")
+                    debug_print(f"任务 [{current_task_name}] 等待 {task_interval} 秒以确保下一步目标出现")
                     time.sleep(task_interval)
 
         except Exception as e:
             import traceback
-            print(f"运行脚本时发生错误: {e}")
+            debug_print(f"运行脚本时发生错误: {e}")
             traceback.print_exc()
             QMessageBox.critical(None, "错误", "脚本运行失败，请检查设置或重试！")
             global_is_scripts_enabled = False
         finally:
-            print("\n=====================脚本线程已终止=====================\n")
+            debug_print("\n=====================脚本线程已终止=====================\n")
             global_is_scripts_enabled = False
 
     # 执行额外操作逻辑
     def perform_extra_action(self, extra_action_config):
         steps = extra_action_config.get("actions", [])  # 使用 "actions" 字段
         if not steps:
-            print("[额外操作] 未配置任何操作步骤，跳过额外操作")
+            debug_print("[额外操作] 未配置任何操作步骤，跳过额外操作")
             return
 
         for step_index, step in enumerate(steps):
@@ -1216,35 +1353,35 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             use_image_recognition = step.get("use_image_recognition", "True") == "True"
             delay = step.get("delay", 0.3)
 
-            print(f"[额外操作 第{step_index + 1}步] 开始执行")
+            debug_print(f"[额外操作 第{step_index + 1}步] 开始执行")
 
             # 图像识别逻辑
             if use_image_recognition and target_image:
                 found = dm.FindPic(0, 0, 4000, 4000, resource_path(target_image), "000000", 0.9, 0)
                 if found[1] == -1 and found[2] == -1:
-                    print(f"[额外操作 第{step_index + 1}步] 未找到图片 {target_image}，跳过点击")
+                    debug_print(f"[额外操作 第{step_index + 1}步] 未找到图片 {target_image}，跳过点击")
                 else:
-                    print(f"[额外操作 第{step_index + 1}步] 识别到 {target_image}")
+                    debug_print(f"[额外操作 第{step_index + 1}步] 识别到 {target_image}")
 
             # 点击坐标逻辑
             if isinstance(click_coords[0], int):  # 单个坐标
                 click_x, click_y = click_coords
                 dm.MoveTo(click_x, click_y)
                 dm.LeftClick()
-                print(f"[额外操作 第{step_index + 1}步] 点击坐标: ({click_x}, {click_y}), 延迟: {delay} 秒")
+                debug_print(f"[额外操作 第{step_index + 1}步] 点击坐标: ({click_x}, {click_y}), 延迟: {delay} 秒")
             elif isinstance(click_coords[0], list):  # 多个坐标
                 for i, coord in enumerate(click_coords):
                     click_x, click_y = coord
                     dm.MoveTo(click_x, click_y)
                     dm.LeftClick()
-                    print(
+                    debug_print(
                         f"[额外操作 第{step_index + 1}步] 第 {i + 1} 次点击坐标: ({click_x}, {click_y}), 延迟: {delay} 秒")
                     time.sleep(delay)
 
             # 等待延迟
             time.sleep(delay)
 
-        print("[额外操作] 额外操作完成，继续循环")
+        debug_print("[额外操作] 额外操作完成，继续循环")
 
     # 重写关闭窗口事件
     def closeEvent(self, event):
@@ -1254,21 +1391,21 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                 result = self.confirmExitDialog.exec_()
                 if result == QtWidgets.QDialog.Accepted:
                     global_is_scripts_enabled = False
-                    print("等待脚本线程安全退出")
+                    debug_print("等待脚本线程安全退出")
                     script_thread.join(timeout=5)
                     if script_thread.is_alive():
-                        print("脚本线程未能及时退出，强制终止程序")
+                        debug_print("脚本线程未能及时退出，强制终止程序")
                     else:
-                        print("脚本线程已终止")
+                        debug_print("脚本线程已终止")
                     self.close_all_child_windows()
                     event.accept()
                 else:
                     event.ignore()
             except Exception as e:
-                print(f"关闭窗口时发生错误: {e}")
+                debug_print(f"关闭窗口时发生错误: {e}")
                 event.ignore()
         else:
-            print("脚本未运行，直接关闭窗口")
+            debug_print("脚本未运行，直接关闭窗口")
             self.close_all_child_windows()
             event.accept()
 
@@ -1276,18 +1413,18 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
     def close_all_child_windows(self):
         for child_window in self.findChildren(QtWidgets.QWidget):
             if isinstance(child_window, QtWidgets.QDialog) and child_window.isVisible():
-                print(f"关闭子窗口: {child_window.windowTitle()}")
+                debug_print(f"关闭子窗口: {child_window.windowTitle()}")
                 child_window.close()
         for window in QApplication.topLevelWidgets():
             if window != self and window.isVisible():
-                print(f"关闭游离窗口: {window.windowTitle()}")
+                debug_print(f"关闭游离窗口: {window.windowTitle()}")
                 window.close()
 
 
 def handle_uncaught_exception(exc_type, exc_value, exc_traceback):
     """重写全局异常处理函数"""
     global global_is_scripts_enabled, script_thread
-    print("发生未捕获的异常，正在注销大漠插件并终止线程")
+    debug_print("发生未捕获的异常，正在注销大漠插件并终止线程")
     global_is_scripts_enabled = False
     if script_thread and script_thread.is_alive():
         script_thread.join()
@@ -1317,7 +1454,7 @@ if __name__ == '__main__':
     # 免责声明
     start_dialog = OnStartDialog()
     if start_dialog.exec_() != QDialog.Accepted:
-        print("用户取消启动流程")
+        debug_print("用户取消启动流程")
         sys.exit(0)
 
     if initialize_dm():
@@ -1329,5 +1466,5 @@ if __name__ == '__main__':
         mainWindow.show()
         sys.exit(app.exec_())
     else:
-        print("用户关闭登录窗口，程序退出")
+        debug_print("用户关闭登录窗口，程序退出")
         sys.exit(0)
