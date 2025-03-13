@@ -20,7 +20,9 @@ a = Analysis(
         'cryptography.hazmat.backends',
         'cryptography.hazmat.bindings',
         'cryptography.hazmat.primitives',
-        'win32timezone'
+        'win32timezone',
+        'sip',
+        'PyQt5.sip'
     ],
     hookspath=[],
     hooksconfig={
@@ -29,7 +31,14 @@ a = Analysis(
         }
     },
     runtime_hooks=[],
-    excludes=['tkinter', 'test'],
+    excludes=[
+        'tkinter',
+        'test',
+        'PyQt5.Qt3D*',       # 排除3D模块
+        'PyQt5.QtMultimedia',# 排除多媒体
+        'PyQt5.QtSensors',   # 排除传感器
+        'PyQt5.QtPositioning'# 排除定位
+    ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
@@ -50,8 +59,11 @@ exe = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
-    upx_exclude=['vcruntime140.dll'],
+    upx=False,
+    upx_options=['--best', '--lzma'],
+    upx_exclude=[
+        'vcruntime140.dll'
+    ],
     runtime_tmpdir=None,
     console=False,  # 控制台开关在此处设置
     uac_admin=False,  # 以管理员权限打开
