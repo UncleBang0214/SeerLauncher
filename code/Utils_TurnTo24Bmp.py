@@ -23,6 +23,6 @@ def turn_to_24bit_bmp(input_path, output_path):
         print(f"图片转换失败: {e}")
 
 
-input_image = "C:/Users/Yun/Desktop/Test/SeerLauncher/code/img/误触赛尔个人信息.png"
-output_image = "C:/Users/Yun/Desktop/Test/SeerLauncher/code/img/误触赛尔个人信息.bmp"
+input_image = "C:/Users/Yun/Desktop/Test/SeerLauncher/code/img/海洋星.png"
+output_image = "C:/Users/Yun/Desktop/Test/SeerLauncher/code/img/海洋星.bmp"
 turn_to_24bit_bmp(input_image, output_image)
