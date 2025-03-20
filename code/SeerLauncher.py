@@ -1,4 +1,5 @@
 import ctypes
+import shutil
 from ctypes import CDLL, c_float
 import requests
 import threading
@@ -7,6 +8,7 @@ import atexit
 import json
 import sys
 import os
+import re
 import base64
 import pyttsx3
 from pycaw.utils import AudioUtilities
@@ -18,7 +20,7 @@ from PyQt5 import QtWidgets, QtCore, QAxContainer
 from PyQt5.QtCore import QRect, Qt, QUrl, QTimer
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDialog, QMessageBox, QFileDialog, QComboBox, QVBoxLayout, \
     QScrollArea, QWidget, QLabel, QDialogButtonBox
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings, QWebEngineProfile
 
 from Ui_MainWindow import Ui_MainWindow
@@ -30,8 +32,28 @@ from Ui_LoadScriptDialogWindow import Ui_LoadScriptDialogWindow
 from Ui_ConfirmExitDialogWindow import Ui_ConfirmExitDialogWindow
 from Ui_EncyclopediaWindow import Ui_EncyclopediaWindow
 
+
+def debug_print(*args, **kwargs):
+    """带条件判断的调试输出"""
+    if global_debug_mode:
+        print(*args, **kwargs)
+
+
+def resource_path(relative_path):
+    """获取资源路径"""
+    if getattr(sys, 'frozen', False):  # 判断是否为打包后的exe文件
+        base_path = os.path.dirname(sys.executable)  # exe文件所在目录
+    else:
+        base_path = os.path.abspath(".")  # 开发环境下的项目根目录
+    resource_path = os.path.join(base_path, relative_path)
+    return resource_path
+
+
 # 全局变量定义
-launcher_name = "茶杯登录器v1.1.2"  # 登录器名称
+launcher_name = "茶杯登录器 v1.1.3"  # 登录器名称
+local_version_info = resource_path('ini/update.json')  # 当前版本信息
+website_version_info = "http://129.204.169.246/SeerLauncher/version/update.json"  # 服务端版本信息
+website_url = "http://129.204.169.246/SeerLauncher/"  # 登录器官网
 dm = None  # 大漠插件对象
 global_debug_mode = True  # debug模式，打包前需置为False，避免频繁打印消耗资源
 global_launcher_mode = 0  # 0：Ie内核，1：Chrome内核
@@ -43,8 +65,9 @@ script_thread = None  # 脚本线程
 is_running = False  # 快捷键启停
 about_content = """
     <h2>关于茶杯登录器</h2>
-    <p>版本：v1.1.2</p>
+    <p>版本：v1.1.3</p>
     <p>开发者：小茶杯</p>
+    <p>联系方式：QQ740438587</p>
     <p>描述：</p>
     <p>下班闲暇之余制作，开发该登录器旨在优化各位的游玩体验</p>
     <p>纯公益项目，不接受任何形式的赞助！！！</p>
@@ -53,9 +76,13 @@ about_content = """
 
 update_content = """
     <h2>登录器更新日志</h2>
+    <h3>v1.1.3 (2025-03-16)</h3>
+    <ul>
+        <li>新增SeerXin官网入口、登录器官网入口、检查更新</li>
+    </ul>
     <h3>v1.1.2 (2025-03-13)</h3>
     <ul>
-        <li>新增chrome内核，支持本地保存密码、内核切换，修复精灵计算器性格下拉框出现重复枚举的问题，优化部分用户存在的黑屏问题，新增自定义语音播报</li>
+        <li>新增chrome内核，支持本地保存密码、内核切换，修复精灵计算器性格下拉框出现重复枚举的问题，新增自定义语音播报</li>
     </ul>
     <h3>v1.1.1 (2025-03-09)</h3>
     <ul>
@@ -106,22 +133,6 @@ update_content = """
         <li>实现了加载页面、刷新和绕过登录</li>
     </ul>
     """
-
-
-def debug_print(*args, **kwargs):
-    """带条件判断的调试输出"""
-    if global_debug_mode:
-        print(*args, **kwargs)
-
-
-def resource_path(relative_path):
-    """获取资源路径"""
-    if getattr(sys, 'frozen', False):  # 判断是否为打包后的exe文件
-        base_path = os.path.dirname(sys.executable)  # exe文件所在目录
-    else:
-        base_path = os.path.abspath(".")  # 开发环境下的项目根目录
-    resource_path = os.path.join(base_path, relative_path)
-    return resource_path
 
 
 def initialize_dm():
@@ -238,11 +249,14 @@ class ConfirmExitDialog(QDialog):
 
 
 class LoginDialog(QDialog, Ui_LoginWindow):
+    """登录窗口"""
 
     def __init__(self, parent=None):
         super(LoginDialog, self).__init__(parent)
         self.setupUi(self)
 
+        # 存储登录结果
+        self.auth_data = None
         # 初始化全局配置
         self.history_file = resource_path('ini/login.json')
         os.makedirs(os.path.dirname(self.history_file), exist_ok=True)
@@ -397,9 +411,9 @@ class LoginDialog(QDialog, Ui_LoginWindow):
             global global_launcher_mode
             global_launcher_mode = self.config["launcher_mode"]
 
-            # 启动主窗口
+            self.auth_data = auth_data
+            # 第一次启动时已经默认登录后显示主窗口了，这里仅存储main_window就好
             self.main_window = MyMainWindow(auth_data)
-            self.main_window.show()
             self.accept()
 
         except Exception as e:
@@ -445,7 +459,7 @@ class LoginDialog(QDialog, Ui_LoginWindow):
 
 
 class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
-    """变速窗口定义及初始化"""
+    """变速窗口"""
 
     def __init__(self, parent=None):
         super(SpeedControlDialog, self).__init__(parent)
@@ -471,6 +485,9 @@ class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
             # 防呆处理
             if value < 1:
                 value = 1
+            # 限制最大值
+            if value > 30:
+                value = 30
             self.lib.SetRange(c_float(value))
             debug_print(f"变速为 {value}x.")
             self.accept()
@@ -479,7 +496,7 @@ class SpeedControlDialog(QDialog, Ui_SpeedControlWindow):
 
 
 class EncyclopediaWindow(QtWidgets.QMainWindow):
-    """精灵大全"""
+    """精灵大全窗口"""
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -625,7 +642,7 @@ class EncyclopediaWindow(QtWidgets.QMainWindow):
 
 
 class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
-    """精灵计算器"""
+    """精灵计算器窗口"""
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -840,7 +857,7 @@ class CalculatorWindow(QtWidgets.QMainWindow, Ui_CalculatorWindow):
 
 
 class LoadScriptDialog(QDialog):
-    """加载自定义脚本窗口定义及初始化"""
+    """加载自定义脚本窗口"""
 
     def __init__(self, parent=None):
         super(LoadScriptDialog, self).__init__(parent)
@@ -869,6 +886,8 @@ class LoadScriptDialog(QDialog):
 
 
 class MessageDialog(QDialog):
+    """自定义消息窗口"""
+
     def __init__(self, title, content, parent=None):
         super().__init__(parent)
         self.setWindowTitle(title)
@@ -910,17 +929,20 @@ class MessageDialog(QDialog):
 
 
 class MyMainWindow(QMainWindow, Ui_MainWindow):
-    """主窗口定义及初始化"""
+    """登录器主窗口"""
 
     def __init__(self, auth_data: dict):
         super(MyMainWindow, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle(launcher_name)
 
         # 登录
         self.auth_data = auth_data
         self.init_components()
-        self.ReFresh.triggered.connect(self.refresh_page)
+        self.ReLogin.triggered.connect(self.show_login_dialog)
         # 菜单
+        self.SeerXinWebsite.triggered.connect(self.open_seer_xin_website)
+        self.LauncherWebsite.triggered.connect(self.open_launcher_website)
         self.SpeedChange.triggered.connect(self.open_speed_dialog)
         if global_launcher_mode == 1:
             self.SpeedChange.setEnabled(False)
@@ -947,6 +969,8 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         # 关于
         self.About.triggered.connect(self.open_about)
         self.UpdateLog.triggered.connect(self.open_updatelog)
+        self.CheckUpdate.triggered.connect(self.manual_check_update)
+        QtCore.QTimer.singleShot(1000, lambda: self.check_update(auto_check=True))
 
     # 初始化浏览器组件
     def init_components(self):
@@ -954,7 +978,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         if global_launcher_mode == 0:
             self.axWidget = QAxContainer.QAxWidget(self.centralwidget)
             # 初始尺寸设为窗口客户区大小
-            self.axWidget.setGeometry(QRect(-17, -17, self.width(), self.height()))
+            self.axWidget.setGeometry(QRect(-25, -17, 1024, 960))
             # 设置Flash控件的ClassID
             self.axWidget.setControl("{8856F961-340A-11D0-A96B-00C04FD705A2}")
             # 登录
@@ -980,6 +1004,15 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             self.browser.load(QUrl(game_url))
             QTimer.singleShot(3000, self.check_flash_status)
 
+    # SeerXin官网
+    def open_seer_xin_website(self):
+        QDesktopServices.openUrl(QUrl("http://seer.xin/#/login"))
+
+    # 登录器官网
+    def open_launcher_website(self):
+        QDesktopServices.openUrl(QUrl("http://129.204.169.246/SeerLauncher/"))
+
+    '''
     # 刷新
     def refresh_page(self):
         global global_launcher_mode
@@ -992,6 +1025,23 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             game_url = LoginService.GAME_URL_TEMPLATE.format(session=self.auth_data['session'])
             debug_print("刷新:", game_url)
             self.browser.load(QUrl(game_url))
+    '''
+
+    def show_login_dialog(self):
+        """显示登录窗口并处理结果"""
+        login_dialog = LoginDialog(self)
+        if login_dialog.exec_() == QDialog.Accepted:
+            new_session = login_dialog.auth_data['session']
+            self._reload_browser(new_session)
+
+    def _reload_browser(self, new_session: str):
+        """用新 session 重新加载页面"""
+        global global_launcher_mode
+        new_url = LoginService.GAME_URL_TEMPLATE.format(session=new_session)
+        if global_launcher_mode == 0:
+            self.axWidget.dynamicCall("Navigate(const QString&)", new_url)
+        else:
+            self.browser.load(QUrl(new_url))
 
     def configure_flash(self):
         """配置Flash插件参数"""
@@ -1081,31 +1131,42 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         """清理浏览器缓存"""
         global global_launcher_mode
         if global_launcher_mode == 0:
-            # 通过COM接口清理
-            ie = win32com.client.Dispatch("InternetExplorer.Application")
+            try:
+                # 使用系统命令清理IE缓存（推荐方式）
+                os.system('RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 255')
 
-            # 清理Cookies
-            ie.Navigate("javascript:document.execCommand('ClearAuthenticationCache')")
+                # 删除缓存目录的改进方法
+                cache_paths = [
+                    os.path.join(os.environ['USERPROFILE'], r'AppData\Local\Microsoft\Windows\INetCache'),
+                    os.path.join(os.environ['USERPROFILE'], r'AppData\Local\Microsoft\Windows\History'),
+                    os.path.join(os.environ['USERPROFILE'], r'AppData\Local\Microsoft\Internet Explorer'),
+                    os.path.join(os.environ['USERPROFILE'], r'AppData\Roaming\Microsoft\Windows\Cookies')
+                ]
 
-            # 清理历史记录和缓存
-            cache_manager = win32com.client.Dispatch("InetCpl.CacheManager")
-            cache_manager.DeleteCacheEntry("", 0x00000001)  # 清理临时文件
+                for path in cache_paths:
+                    if os.path.exists(path):
+                        try:
+                            shutil.rmtree(path, ignore_errors=True)
+                        except Exception as e:
+                            print(f"清理 {path} 失败: {str(e)}")
 
-            # 清理本地存储
-            self._delete_ie_files([
-                os.path.join(os.environ['USERPROFILE'], r'AppData\Local\Microsoft\Windows\INetCache'),
-                os.path.join(os.environ['USERPROFILE'], r'AppData\Local\Microsoft\Windows\History')
-            ])
+                # 兼容性处理：尝试关闭所有IE进程
+                os.system('taskkill /f /im iexplore.exe 2>nul')
 
-            # 使用系统命令清理
-            os.system('RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 255')
+                QMessageBox.information(
+                    self,
+                    "清理完成",
+                    "IE缓存已清理完成！\n包括：\n- Cookies\n- 历史记录\n- 临时文件\n- 浏览器数据文件",
+                    QMessageBox.Ok
+                )
 
-            QMessageBox.information(
-                self,
-                "清理完成",
-                "IE缓存已清理完成！\n包括：\n- Cookies\n- 历史记录\n- 临时文件",
-                QMessageBox.Ok
-            )
+            except Exception as e:
+                QMessageBox.critical(
+                    self,
+                    "清理失败",
+                    f"IE缓存清理失败，请手动清理：\n{str(e)}",
+                    QMessageBox.Ok
+                )
 
         if global_launcher_mode == 1:
             profile = QWebEngineProfile.defaultProfile()
@@ -1200,6 +1261,87 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         global update_content
         dialog = MessageDialog("更新日志", update_content, self)
         dialog.exec_()
+
+    # 检查更新
+    def get_local_version(self):
+        """获取本地版本信息"""
+        try:
+            with open(local_version_info, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data.get("version", "0.0.0")
+        except Exception as e:
+            debug_print(f"读取本地版本失败: {str(e)}")
+            return "0.0.0"
+
+    def get_remote_version(self):
+        """获取远程版本信息"""
+        try:
+            response = requests.get(website_version_info, timeout=3)
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            debug_print(f"获取远程版本失败: {str(e)}")
+            return None
+
+    def version_compare(self, v1, v2):
+        """版本比较"""
+
+        def parse_version(v):
+            return [int(x) for x in re.sub(r'(\.0+)*$', '', v).split(".")]
+
+        return parse_version(v1) < parse_version(v2)
+
+    def check_update(self, auto_check=True):
+        """核心检查更新逻辑"""
+        try:
+            # 获取本地版本
+            with open(local_version_info, 'r') as f:
+                local_data = json.load(f)
+                current_ver = local_data.get("version", "0.0.0")
+
+            # 获取远程信息
+            response = requests.get(website_version_info, timeout=3)
+            remote_data = response.json()
+            remote_ver = remote_data.get("version", current_ver)
+
+            # 版本比较
+            if self.version_compare(current_ver, remote_ver):
+                self.show_update_dialog(current_ver, remote_ver, website_url, auto_check)
+            elif not auto_check:
+                QMessageBox.information(self, "提示", f"当前已是最新版本（v{current_ver}）")
+
+        except Exception as e:
+            debug_print(f"更新检查异常: {str(e)}")
+            if not auto_check:
+                QMessageBox.warning(self, "错误", "检查更新失败，请检查网络连接")
+
+    def show_update_dialog(self, current_ver, new_ver, url, is_auto_check):
+        """显示更新对话框"""
+        msg = QMessageBox()
+        msg.setWindowTitle("发现新版本" if is_auto_check else "检查更新")
+        msg.setIcon(QMessageBox.Information)
+
+        message = f"当前版本: v{current_ver}\n最新版本: v{new_ver}\n\n是否立即下载更新？"
+        msg.setText(message)
+
+        # 修复按钮文本设置方式
+        if is_auto_check:
+            yes_button = msg.addButton("前往下载", QMessageBox.YesRole)
+            no_button = msg.addButton("暂不更新", QMessageBox.NoRole)
+        else:
+            yes_button = msg.addButton("前往下载", QMessageBox.YesRole)
+            no_button = msg.addButton("暂不更新", QMessageBox.RejectRole)
+
+        msg.setDefaultButton(no_button)
+
+        ret = msg.exec_()
+
+        if msg.clickedButton() == yes_button:
+            QDesktopServices.openUrl(QUrl(url))
+
+    def manual_check_update(self):
+        """主动触发检查更新"""
+        self.check_update(auto_check=False)
 
     # 键盘监听器
     def start_keyboard_listener(self):
@@ -1473,6 +1615,7 @@ if __name__ == '__main__':
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
 
+    # 进程和图标
     app = QApplication(sys.argv)
     app_icon_path = resource_path('img/logo.ico')
     app.setWindowIcon(QIcon(app_icon_path))
@@ -1482,19 +1625,24 @@ if __name__ == '__main__':
     os.environ[
         "QTWEBENGINE_CHROMIUM_FLAGS"] += " --user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
 
-    # 免责声明
+    # 用户协议
     start_dialog = OnStartDialog()
     if start_dialog.exec_() != QDialog.Accepted:
         debug_print("用户取消启动流程")
         sys.exit(0)
 
+    # 如果注册了大漠插件
     if initialize_dm():
+        # 退出时注销大漠插件
         atexit.register(unregister_dm)
+
+    # 登录后显示主窗口
     login_dialog = LoginDialog()
     if login_dialog.exec_() == QDialog.Accepted:
         mainWindow = login_dialog.main_window
         mainWindow.setWindowIcon(QIcon(app_icon_path))
         mainWindow.show()
+        # 进入程序主循环
         sys.exit(app.exec_())
     else:
         debug_print("用户关闭登录窗口，程序退出")
